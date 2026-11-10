@@ -1,0 +1,601 @@
+/* Nabi, the character. Everything here is a transform or an opacity: the compositor does the work.
+   The motion is deliberately small — a living object, not a cartoon: each part keeps its own period, so
+   the whole never settles into an obvious loop. */
+
+
+.nabi {
+  display: block; overflow: visible;
+  /* the companion: white porcelain, navy joints, blue-black glass, gold trim */
+  --case-top: #ffffff; --case-bottom: #d3d8e2; --joint: #1d2944;
+  --glass-top: #14203a; --glass-bottom: #050811; --rim: 0.85;
+  --suit: #4a3d92; --suit-dark: #2a2160; --lapel: #33296f; --shirt: #ffffff; --tie: #8b5cf6; --tie-dark: #6d28d9;
+}
+.nabi * { transform-box: fill-box; transform-origin: center; }
+.nabi .rim { stroke-opacity: var(--rim); }
+/* Serious Mode: a light graphite shell and a royal violet suit, bright enough to read on the dark card. */
+.nabi--dressed {
+  --case-top: #a3a9bd; --case-bottom: #585d72; --joint: #1c1a2b;
+  --glass-top: #1a1135; --glass-bottom: #05030b; --rim: 0.6;
+}
+
+/* one outfit at a time */
+.wear-suit, .specs { display: none; }
+.nabi--dressed .wear-suit, .nabi--dressed .specs { display: inline; }
+.nabi--dressed .wear-casual { display: none; }
+.specs rect, .specs path { fill: none; stroke: url(#nabi-trim); stroke-width: 1.5; stroke-linecap: round; }
+.specs rect { fill: rgba(255, 255, 255, 0.035); }
+.nabi--dressed .blush ellipse { opacity: 0 !important; }
+
+/* the head turns after the eyes, the body leans after the head */
+.head-look { transform-box: view-box; transform-origin: 60px 88px; transition: transform 0.4s cubic-bezier(0.3, 0.7, 0.2, 1); }
+.nabi-lean { transform-box: view-box; transition: transform 0.55s cubic-bezier(0.3, 0.7, 0.2, 1); }
+
+/* brows carry the mood */
+.brow { fill: none; stroke: var(--eye); stroke-width: 1.8; stroke-linecap: round; opacity: 0.55; transition: transform 0.3s ease, opacity 0.3s ease; }
+.nabi--thinking .brow, .nabi--think-deep .brow, .nabi--done .brow, .nabi--nod .brow { transform: translateY(-1.6px); }
+.nabi--waiting .brow, .nabi--curious .brow, .nabi--furious .brow { transform: translateY(-2.6px); opacity: 0.75; }
+.nabi--annoyed .brow-l, .nabi--angry .brow-l { transform: translateY(1px) rotate(14deg); opacity: 0.9; }
+.nabi--annoyed .brow-r, .nabi--angry .brow-r { transform: translateY(1px) rotate(-14deg); opacity: 0.9; }
+.nabi--error .brow-l, .nabi--stopped .brow-l { transform: rotate(-10deg); }
+.nabi--error .brow-r, .nabi--stopped .brow-r { transform: rotate(10deg); }
+.nabi--sleeping .brow, .nabi--yawn .brow { transform: translateY(1.6px); opacity: 0.2; }
+.nabi--focus .brow { transform: translateY(0.8px); opacity: 0.45; }
+.nabi--dressed .brow { stroke-width: 1.6; }
+
+/* the chest: the core breathes, the meters tick, faster when it works */
+.core { animation: nabi-core 3.4s ease-in-out infinite; }
+.core-ring { animation: nabi-core-ring 3.4s ease-out infinite; }
+@keyframes nabi-core { 0%, 100% { opacity: 0.75; } 50% { opacity: 1; } }
+@keyframes nabi-core-ring { 0% { transform: scale(0.7); opacity: 0.5; } 100% { transform: scale(1.35); opacity: 0; } }
+.nabi .meter { transform-origin: 50% 100%; animation: nabi-meter 2.6s ease-in-out infinite; }
+.nabi .meter.m2 { animation-delay: 1.1s; }
+@keyframes nabi-meter { 0%, 100% { transform: scaleY(0.45); } 50% { transform: scaleY(1); } }
+.nabi--thinking .core, .nabi--thinking .core-ring, .nabi--working .core, .nabi--working .core-ring { animation-duration: 1.1s; }
+.nabi--thinking .meter, .nabi--working .meter, .nabi--typing .meter { animation-duration: 0.7s; }
+.nabi--sleeping .core, .nabi--sleeping .meter { animation-duration: 7s; }
+
+/* ear lights tick like an instrument at rest */
+.ear-led { animation: nabi-led 2.8s steps(1, end) infinite; }
+.ear:nth-of-type(2) .ear-led { animation-delay: 1.4s; }
+@keyframes nabi-led { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0.35; } }
+.nabi--working .ear-led, .nabi--thinking .ear-led, .nabi--think-deep .ear-led { animation-duration: 0.6s; }
+.nabi--sleeping .ear-led { animation: none; opacity: 0.15; }
+
+/* serious: the tie settles with the body */
+.nabi--dressed .tie { animation: nabi-tie 4.4s ease-in-out infinite; transform-origin: 50% 0%; }
+@keyframes nabi-tie { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(1.6deg); } }
+
+/* listening: it turns to the box while the person types — ears lit, a small attentive tilt */
+.nabi--attend .ear-led { animation: none; opacity: 1; }
+.nabi--attend .bulb-glow { animation-duration: 1.4s; }
+.nabi--attend .brow { transform: translateY(-1.2px); opacity: 0.7; }
+.nabi--attend .nabi-head { animation: nabi-listen 2.4s ease-in-out infinite; }
+@keyframes nabi-listen { 0%, 100% { transform: rotate(-2.2deg); } 50% { transform: rotate(-3.4deg) translateY(0.6px); } }
+
+/* a hover is noticed: the eyes open a little, the lamps brighten, a hand comes up (a nod in a suit) */
+.char:hover .nabi .eyes { transform: scale(1.08); transition: transform 0.2s ease; }
+.char:hover .nabi .bulb-glow { animation-duration: 1s; }
+.char:hover .nabi--idle .arm-r, .char:hover .nabi--curious .arm-r, .char:hover .nabi--peek .arm-r {
+  transform: rotate(-145deg) translate(-8px, 6px); animation: nabi-wave 0.7s ease-in-out 2;
+}
+.char:hover .nabi--focus .nabi-head { animation: nabi-nod 0.9s cubic-bezier(0.3, 0.9, 0.2, 1) 1; }
+
+/* -- always: float, a slow head drift, blinking, breathing light -------------------------------- */
+.nabi-float { animation: nabi-float 4.4s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+.nabi-shadow { animation: nabi-shadow 4.4s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+@keyframes nabi-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3.5px); } }
+@keyframes nabi-shadow { 0%, 100% { transform: scaleX(1); opacity: 0.32; } 50% { transform: scaleX(0.86); opacity: 0.2; } }
+.nabi-head { transform-box: view-box; transform-origin: 60px 88px; animation: nabi-drift 9s ease-in-out infinite; }
+@keyframes nabi-drift { 0%, 100% { transform: rotate(0deg); } 30% { transform: rotate(-1.6deg); } 62% { transform: rotate(1.1deg) translateY(-0.4px); } }
+.antenna { transform-box: view-box; transform-origin: 60px 27px; animation: nabi-antenna 5.2s ease-in-out infinite; }
+@keyframes nabi-antenna { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+
+.face { transition: transform 0.22s cubic-bezier(0.3, 0.7, 0.2, 1); }
+.eye { animation: nabi-blink 6.2s infinite; }
+@keyframes nabi-blink {
+  0%, 46%, 49.6%, 91%, 93.2%, 95.2%, 100% { transform: scaleY(1); }
+  47.8% { transform: scaleY(0.1); }
+  92.1%, 94.2% { transform: scaleY(0.12); }
+}
+.eye-glow { animation: nabi-eye-glow 4.4s ease-in-out infinite; }
+@keyframes nabi-eye-glow { 0%, 100% { opacity: 0.12; } 50% { opacity: 0.22; } }
+.bulb-glow { animation: nabi-glow 3.2s ease-in-out infinite; }
+.chest { animation: nabi-chest 3.2s ease-in-out infinite; }
+@keyframes nabi-glow { 0%, 100% { opacity: 0.35; transform: scale(0.85); } 50% { opacity: 0.85; transform: scale(1.1); } }
+@keyframes nabi-chest { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+
+/* arms move on a spring */
+.arm { transition: transform 0.45s cubic-bezier(0.3, 1.35, 0.5, 1); }
+.arm-l { transform-origin: 70% 10%; }
+.arm-r { transform-origin: 30% 10%; }
+
+/* effects are hidden until a state asks for them */
+.fx > g { opacity: 0; transition: opacity 0.3s; }
+.think-dots circle { fill: var(--eye); }
+.zzz text { fill: #a7b0f0; }
+.sparks path { fill: #ffe2a6; }
+.alert rect, .alert circle { fill: #ffb86b; }
+.steam path { fill: none; stroke: #ff7383; stroke-width: 2.2; stroke-linecap: round; }
+.keys .k1, .keys .k2, .keys .k3, .keys .k4 { fill: var(--glass-top); }
+
+/* -- thinking: the eyes look up and read left to right; the dots count ------------------------- */
+.nabi--thinking .eyes { animation: nabi-read 2.6s ease-in-out infinite; }
+@keyframes nabi-read { 0%, 100% { transform: translateX(-2.4px); } 50% { transform: translateX(2.4px); } }
+.nabi--thinking .think-dots { opacity: 1; }
+.nabi--thinking .think-dots circle { animation: nabi-dot 1.4s ease-in-out infinite; }
+.nabi--thinking .think-dots circle:nth-child(2) { animation-delay: 0.2s; }
+.nabi--thinking .think-dots circle:nth-child(3) { animation-delay: 0.4s; }
+.nabi--thinking .arm-r { transform: translate(-14px, -24px) rotate(52deg); }
+.nabi--thinking .bulb-glow, .nabi--thinking .chest { animation-duration: 1.2s; }
+@keyframes nabi-dot { 0%, 100% { transform: translateY(0); opacity: 0.3; } 40% { transform: translateY(-3px); opacity: 1; } }
+
+/* -- working: looking down at a small keyboard, typing ------------------------------------------- */
+.nabi--working .keys { opacity: 1; }
+.nabi--working .arm-l { animation: nabi-type 0.36s ease-in-out infinite; transform: rotate(-22deg); }
+.nabi--working .arm-r { animation: nabi-type 0.36s ease-in-out 0.18s infinite; transform: rotate(22deg); }
+.nabi--working .k1 { animation: nabi-key 0.72s infinite; }
+.nabi--working .k2 { animation: nabi-key 0.72s 0.18s infinite; }
+.nabi--working .k3 { animation: nabi-key 0.72s 0.36s infinite; }
+.nabi--working .k4 { animation: nabi-key 0.72s 0.54s infinite; }
+.nabi--working .chest { animation: nabi-chest 0.6s ease-in-out infinite; }
+@keyframes nabi-type { 0%, 100% { translate: 0 0; } 50% { translate: 0 2.5px; } }
+@keyframes nabi-key { 0%, 60%, 100% { opacity: 0.35; fill: var(--eye); } 30% { opacity: 1; fill: var(--eye); } }
+
+/* -- typing a reply: the mouth bar moves, the head follows the sentence ------------------------- */
+.talk { animation: nabi-talk 0.34s ease-in-out infinite; }
+@keyframes nabi-talk { 0%, 100% { transform: scaleX(0.55); } 50% { transform: scaleX(1.05); } }
+.nabi--typing .nabi-head { animation: nabi-speak 1.8s ease-in-out infinite; }
+@keyframes nabi-speak { 0%, 100% { transform: rotate(0deg); } 35% { transform: rotate(-1.4deg); } 70% { transform: rotate(1deg); } }
+
+/* -- waiting for the person: a raised hand and a steady signal ---------------------------------- */
+.nabi--waiting .alert { opacity: 1; animation: nabi-alert 1.2s ease-in-out infinite; }
+.nabi--waiting .arm-r { transform: rotate(-150deg) translate(-8px, 6px); animation: nabi-wave 1.4s ease-in-out infinite; }
+@keyframes nabi-alert { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* -- done: happy eyes and one small lift, then stillness ---------------------------------------- */
+.nabi--done .sparks { opacity: 1; animation: nabi-spark 1.6s ease-in-out 2; }
+.nabi--done .nabi-float { animation: nabi-lift 0.8s cubic-bezier(0.3, 0.9, 0.3, 1) 1, nabi-float 4.4s cubic-bezier(0.45, 0, 0.55, 1) 0.8s infinite; }
+.nabi--done .arm-l { transform: rotate(40deg) translate(2px, -2px); }
+.nabi--done .arm-r { transform: rotate(-40deg) translate(-2px, -2px); }
+.nabi--stretch .arm-l { transform: rotate(160deg) translate(8px, 6px); }
+.nabi--stretch .arm-r { transform: rotate(-160deg) translate(-8px, 6px); }
+.nabi--wave .arm-r { transform: rotate(-145deg) translate(-8px, 6px); animation: nabi-wave 0.8s ease-in-out infinite; }
+@keyframes nabi-lift { 0% { transform: translateY(0); } 45% { transform: translateY(-7px); } 100% { transform: translateY(0); } }
+@keyframes nabi-spark { 0%, 100% { transform: scale(0.7); opacity: 0; } 50% { transform: scale(1.1) rotate(25deg); opacity: 1; } }
+@keyframes nabi-wave { 0%, 100% { rotate: 0deg; } 50% { rotate: 20deg; } }
+
+/* -- error / stopped ---------------------------------------------------------------------------- */
+.nabi--error .nabi-float { animation: nabi-shake 0.45s ease-in-out 2; }
+.nabi--stopped .arm-r { transform: rotate(-160deg) translate(-8px, 8px); }
+@keyframes nabi-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+
+/* -- sleeping: slow breath, lights low --------------------------------------------------------- */
+.nabi--sleeping .nabi-float { animation-duration: 7s; }
+.nabi--sleeping .zzz { opacity: 1; animation: nabi-zzz 3.2s ease-in infinite; }
+.nabi--sleeping .bulb-glow, .nabi--sleeping .chest { animation-duration: 6s; }
+.nabi--sleeping .eye-glow { opacity: 0.06; animation: none; }
+@keyframes nabi-zzz { 0% { transform: translate(0, 4px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translate(5px, -9px); opacity: 0; } }
+
+/* -- curious / annoyed / angry ----------------------------------------------------------------- */
+.nabi--curious .nabi-head { animation: nabi-curious 2.6s ease-in-out infinite; }
+@keyframes nabi-curious { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(4deg); } }
+.nabi--annoyed .arm-r { transform: rotate(60deg) translate(-12px, -8px); }
+.nabi--angry .steam, .nabi--furious .steam, .nabi--smash .steam { opacity: 1; animation: nabi-steam 0.9s infinite; }
+.nabi--angry .arm-l, .nabi--furious .arm-l, .nabi--smash .arm-l { transform: rotate(140deg) translate(8px, 6px); }
+.nabi--angry .arm-r, .nabi--furious .arm-r, .nabi--smash .arm-r { transform: rotate(-140deg) translate(-8px, 6px); }
+.nabi--angry .nabi-float, .nabi--furious .nabi-float, .nabi--smash .nabi-float { animation: nabi-shake 0.3s ease-in-out infinite; }
+@keyframes nabi-steam { 0% { transform: translateY(4px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(-6px); opacity: 0; } }
+
+/* -- Serious Mode's own movements: composed ----------------------------------------------------- */
+.nabi--focus .nabi-float { animation-duration: 6s; }
+.nabi--focus .nabi-head { animation: nabi-focus 10s ease-in-out infinite; }
+.nabi--focus .antenna { animation-duration: 8s; }
+.nabi--focus .bulb-glow, .nabi--focus .chest { animation-duration: 4.8s; }
+.nabi--focus .arm-l, .nabi--focus .arm-r { transform: rotate(0deg); }
+@keyframes nabi-focus { 0%, 100% { transform: rotate(-0.8deg); } 50% { transform: rotate(0.6deg); } }
+
+.nabi--think-deep .eyes { animation: nabi-read 3.4s ease-in-out infinite; }
+.nabi--think-deep .think-dots { opacity: 1; }
+.nabi--think-deep .think-dots circle { animation: nabi-dot 2s ease-in-out infinite; }
+.nabi--think-deep .think-dots circle:nth-child(2) { animation-delay: 0.35s; }
+.nabi--think-deep .think-dots circle:nth-child(3) { animation-delay: 0.7s; }
+.nabi--think-deep .arm-r { transform: translate(-12px, -22px) rotate(48deg); }
+.nabi--think-deep .bulb-glow, .nabi--think-deep .chest { animation-duration: 1.6s; }
+
+.nabi--nod .nabi-head { animation: nabi-nod 0.9s cubic-bezier(0.3, 0.9, 0.2, 1) 1; }
+.nabi--nod .arm-l, .nabi--nod .arm-r { transform: rotate(0deg); }
+@keyframes nabi-nod { 0% { transform: translateY(0); } 45% { transform: translateY(3px) rotate(-1deg); } 100% { transform: translateY(0); } }
+
+/* Nothing playful survives the mode: no hearts, no sparks. */
+.nabi--dressed .hearts, .nabi--dressed .sparks { opacity: 0 !important; }
+
+/* ===== Behaviour: what it does with itself =========================================================
+   Long cycles with the action packed into a short slice, so it reads as an occasional gesture, not a loop. */
+
+/* the suit's extras */
+.headset { display: none; }
+.nabi--dressed .headset { display: inline; }
+.lens-glint { stroke: #fff !important; stroke-width: 1.3 !important; opacity: 0; animation: nabi-lens 7s ease-in-out 2s infinite; }
+.lens-glint.g2 { animation-delay: 2.15s; }
+@keyframes nabi-lens { 0%, 88%, 100% { opacity: 0; } 92% { opacity: 0.7; } 96% { opacity: 0; } }
+
+/* the hover thruster: a flame that flickers, longer when it lifts */
+.thruster .flame { transform-origin: 50% 0%; animation: nabi-flame 0.18s ease-in-out infinite alternate; opacity: 0.85; }
+@keyframes nabi-flame { from { transform: scaleY(0.82) scaleX(0.96); } to { transform: scaleY(1.08) scaleX(1.02); } }
+.nabi--done .thruster .flame, .nabi--dance .thruster .flame { animation-name: nabi-flame-up; }
+@keyframes nabi-flame-up { from { transform: scaleY(1.1); } to { transform: scaleY(1.45); } }
+.nabi--sleeping .thruster .flame { opacity: 0.35; animation-duration: 0.6s; }
+.nabi--working .thruster { opacity: 0; }
+
+/* it breathes */
+.nabi-body { transform-box: view-box; transform-origin: 60px 121px; animation: nabi-breathe 4.4s ease-in-out infinite; }
+@keyframes nabi-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, 1.022); } }
+
+/* at rest it looks around now and then, and blinks happily at nothing */
+.nabi--idle .eyes, .nabi--peek .eyes { animation: nabi-glance 12s ease-in-out infinite; }
+@keyframes nabi-glance {
+  0%, 62%, 100% { transform: translate(0, 0); }
+  65%, 71% { transform: translate(-3.6px, -0.6px); }
+  74%, 80% { transform: translate(3.6px, 0.4px); }
+  83% { transform: translate(0, 0); }
+}
+.nabi--idle .arm-l { animation: nabi-fidget 11s ease-in-out infinite; }
+@keyframes nabi-fidget { 0%, 84%, 100% { transform: rotate(0deg); } 88% { transform: rotate(18deg); } 92% { transform: rotate(-6deg); } }
+.nabi--idle .antenna { animation: nabi-antenna 5.2s ease-in-out infinite, nabi-twitch 9s ease-in-out infinite; }
+@keyframes nabi-twitch { 0%, 90%, 100% { translate: 0 0; } 93% { translate: 0 -1.5px; } 96% { translate: 0 0.5px; } }
+
+/* Serious at rest: it checks its watch — the arm comes up, the eyes go to the wrist — and goes back. */
+.nabi--focus .arm-l { animation: nabi-watch 15s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.nabi--focus .eyes { animation: nabi-watch-eyes 15s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+@keyframes nabi-watch { 0%, 78%, 96%, 100% { transform: rotate(0deg); } 82%, 91% { transform: rotate(-78deg) translate(1px, -2px); } }
+@keyframes nabi-watch-eyes { 0%, 79%, 95%, 100% { transform: translate(0, 0); } 83%, 90% { transform: translate(-4px, 3.4px); } }
+
+/* thinking: an orbit around the lamp, a scan line reading the visor, the HUD lit */
+.orbit { transform-box: view-box; transform-origin: 60px 12px; }
+.orbit circle { fill: var(--light); }
+.nabi--thinking .orbit, .nabi--think-deep .orbit { opacity: 1; animation: nabi-orbit 1.6s linear infinite; }
+.nabi--think-deep .orbit { animation-duration: 2.6s; }
+@keyframes nabi-orbit { to { transform: rotate(360deg); } }
+.hud { opacity: 0.25; transition: opacity 0.3s; }
+.nabi--thinking .hud, .nabi--think-deep .hud, .nabi--working .hud, .nabi--attend .hud { opacity: 0.7; }
+.scan { opacity: 0; transform-box: view-box; }
+.nabi--thinking .scan, .nabi--think-deep .scan { animation: nabi-scan 2s ease-in-out infinite; }
+.nabi--think-deep .scan { animation-duration: 2.8s; }
+@keyframes nabi-scan { 0% { transform: translateY(0); opacity: 0; } 15%, 85% { opacity: 0.35; } 100% { transform: translateY(34px); opacity: 0; } }
+.nabi--thinking .nabi-head, .nabi--think-deep .nabi-head { animation: nabi-ponder 3.2s ease-in-out infinite; }
+@keyframes nabi-ponder { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(-4.5deg) translateY(-0.8px); } }
+
+/* writing the answer: lines appear beside the head one after another, the hand gestures */
+.writing rect { fill: var(--eye); transform-origin: 0% 50%; }
+.nabi--typing .writing { opacity: 1; }
+.nabi--typing .writing .w1 { animation: nabi-line 1.8s ease-out infinite; }
+.nabi--typing .writing .w2 { animation: nabi-line 1.8s ease-out 0.35s infinite; }
+.nabi--typing .writing .w3 { animation: nabi-line 1.8s ease-out 0.7s infinite; }
+@keyframes nabi-line { 0% { transform: scaleX(0); opacity: 0.9; } 45%, 80% { transform: scaleX(1); opacity: 0.9; } 100% { transform: scaleX(1); opacity: 0; } }
+html[dir="rtl"] .writing rect { transform-origin: 100% 50%; }
+.nabi--typing .arm-l { animation: nabi-gesture 1.6s ease-in-out infinite; }
+@keyframes nabi-gesture { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(-26deg) translateY(-1px); } }
+
+/* listening to the person type: sound waves at the ear */
+.listen-waves path { fill: none; stroke: var(--light); stroke-width: 1.6; stroke-linecap: round; }
+.nabi--attend .listen-waves { opacity: 1; }
+.nabi--attend .listen-waves path { animation: nabi-wave-in 1.4s ease-out infinite; }
+.nabi--attend .listen-waves path:nth-child(2) { animation-delay: 0.3s; }
+@keyframes nabi-wave-in { 0% { opacity: 0; transform: translateX(3px); } 40% { opacity: 0.9; } 100% { opacity: 0; transform: translateX(-1px); } }
+.nabi--attend .eyes { animation: nabi-nodding 1.2s ease-in-out infinite; }
+@keyframes nabi-nodding { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(0.8px); } }
+
+/* waiting for the person: the head leans in */
+.nabi--waiting .nabi-head { animation: nabi-lean-in 2.4s ease-in-out infinite; }
+@keyframes nabi-lean-in { 0%, 100% { transform: rotate(2deg); } 50% { transform: rotate(3.5deg) translateY(-0.6px); } }
+
+/* people who ask for less motion get a still character */
+@media (prefers-reduced-motion: reduce) { .nabi *, .nabi { animation: none !important; } }
+/* and nothing moves while the window itself is being dragged */
+body.gliding .nabi *, body.gliding .nabi { animation-play-state: paused !important; transition: none !important; }
+
+/* ===== Acts: props, poses, motions and moves (director.js picks them, props.jsx draws them) =========
+   Arms turn about the shoulder in the drawing's own coordinates, so a prop in the hand does not move the
+   pivot. A held prop is counter-rotated by the same angle, so a mug stays upright whatever the arm does. */
+.arm-r { transform-box: view-box; transform-origin: 90.5px 94.5px; }
+.arm-l { transform-box: view-box; transform-origin: 29.5px 94.5px; }
+.ph { transform-box: view-box; transition: transform 0.45s cubic-bezier(0.3, 1.35, 0.5, 1); }
+.ph-r { transform-origin: 92px 113.5px; }
+.ph-l { transform-origin: 28px 113.5px; }
+.fx > g.prop-fx { opacity: 1; }
+.prop-front, .prop-head, .prop-fx { animation: prop-in 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+@keyframes prop-in { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+.prop-front, .prop-head, .prop-fx { transform-box: fill-box; transform-origin: 50% 100%; }
+
+/* poses: one angle per arm */
+.nabi.act[class*="pose-"] .arm-r { transform: rotate(var(--ar, 0deg)); animation: none; }
+.nabi.act[class*="pose-"] .arm-l { transform: rotate(var(--al, 0deg)); animation: none; }
+.nabi.act .ph-r { transform: rotate(calc(var(--ar, 0deg) * -1)); }
+.nabi.act .ph-l { transform: rotate(calc(var(--al, 0deg) * -1)); }
+.pose-hold-r { --ar: 70deg; }
+.pose-raise-r { --ar: -150deg; }
+.pose-raise-l { --al: 150deg; }
+.pose-out-r { --ar: -88deg; }
+.pose-both { --ar: 70deg; --al: -70deg; }
+.pose-write { --ar: 72deg; --al: -64deg; }
+.pose-type { --ar: 60deg; --al: -60deg; }
+.pose-eyes { --ar: 112deg; --al: -112deg; }
+.pose-ear-r { --ar: -170deg; }
+.pose-carry-l { --al: 4deg; }
+.pose-meditate { --ar: -38deg; --al: 38deg; }
+.pose-cheer { --ar: -150deg; --al: 150deg; }
+.pose-tie { --ar: 82deg; }
+.pose-pour-r { --ar: 52deg; }
+.nabi.pose-pour-r .ph-r { transform: rotate(-22deg); }
+.nabi.act.pose-chin .arm-r { transform: translate(-14px, -24px) rotate(55deg); animation: none; }
+.nabi.act.pose-chin .ph-r { transform: rotate(-55deg); }
+
+/* poses that move */
+.nabi.act.pose-sip-r .arm-r { animation: act-sip 3.2s ease-in-out infinite; }
+.nabi.act.pose-sip-r .ph-r { animation: act-sip-prop 3.2s ease-in-out infinite; }
+@keyframes act-sip { 0%, 30%, 100% { transform: rotate(70deg); } 45%, 70% { transform: rotate(108deg); } }
+@keyframes act-sip-prop { 0%, 30%, 100% { transform: rotate(-70deg); } 45%, 70% { transform: rotate(-90deg); } }
+.nabi.act.pose-throw-r .arm-r { animation: act-throw 3s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+@keyframes act-throw { 0%, 20% { transform: rotate(-150deg); } 32% { transform: rotate(30deg); } 60%, 100% { transform: rotate(0deg); } }
+.nabi.act.pose-wipe .arm-r { animation: act-wipe 0.7s ease-in-out infinite; }
+.nabi.act.pose-wipe .ph-r { transform: rotate(-110deg); }
+@keyframes act-wipe { 0%, 100% { transform: translate(-6px, -18px) rotate(100deg); } 50% { transform: translate(-6px, -18px) rotate(124deg); } }
+.nabi.act.pose-juggle .arm-r { animation: act-juggle 0.8s ease-in-out infinite; }
+.nabi.act.pose-juggle .arm-l { animation: act-juggle-l 0.8s ease-in-out 0.4s infinite; }
+@keyframes act-juggle { 0%, 100% { transform: rotate(40deg); } 50% { transform: rotate(-20deg); } }
+@keyframes act-juggle-l { 0%, 100% { transform: rotate(-40deg); } 50% { transform: rotate(20deg); } }
+.nabi.act.pose-stretch .arm-r { animation: act-stretch-r 3.6s ease-in-out both; }
+.nabi.act.pose-stretch .arm-l { animation: act-stretch-l 3.6s ease-in-out both; }
+@keyframes act-stretch-r { 0%, 100% { transform: rotate(0deg); } 30%, 70% { transform: rotate(-168deg); } }
+@keyframes act-stretch-l { 0%, 100% { transform: rotate(0deg); } 30%, 70% { transform: rotate(168deg); } }
+.nabi.act.pose-wave .arm-r { transform: rotate(-145deg); animation: act-wave 0.6s ease-in-out infinite; }
+@keyframes act-wave { 0%, 100% { transform: rotate(-145deg); } 50% { transform: rotate(-120deg); } }
+.nabi.act.pose-dance .arm-r { animation: act-dance-r 0.7s ease-in-out infinite; }
+.nabi.act.pose-dance .arm-l { animation: act-dance-l 0.7s ease-in-out infinite; }
+@keyframes act-dance-r { 0%, 100% { transform: rotate(-120deg); } 50% { transform: rotate(-60deg); } }
+@keyframes act-dance-l { 0%, 100% { transform: rotate(60deg); } 50% { transform: rotate(120deg); } }
+.nabi.act.pose-cheer .arm-r { animation: act-cheer-r 0.9s ease-in-out infinite; }
+.nabi.act.pose-cheer .arm-l { animation: act-cheer-l 0.9s ease-in-out infinite; }
+@keyframes act-cheer-r { 0%, 100% { transform: rotate(-150deg); } 50% { transform: rotate(-165deg) translateY(-2px); } }
+@keyframes act-cheer-l { 0%, 100% { transform: rotate(150deg); } 50% { transform: rotate(165deg) translateY(-2px); } }
+.nabi.act.pose-cheer .ph-r { animation: act-cheer-prop 0.9s ease-in-out infinite; }
+@keyframes act-cheer-prop { 0%, 100% { transform: rotate(150deg); } 50% { transform: rotate(165deg); } }
+.nabi.act.pose-stamp .arm-r { animation: act-stamp 1.4s cubic-bezier(0.5, 0, 0.3, 1) infinite; }
+.nabi.act.pose-stamp .ph-r { animation: act-stamp-prop 1.4s cubic-bezier(0.5, 0, 0.3, 1) infinite; }
+@keyframes act-stamp { 0%, 100% { transform: rotate(60deg); } 40% { transform: rotate(30deg); } 55% { transform: rotate(86deg); } }
+@keyframes act-stamp-prop { 0%, 100% { transform: rotate(-60deg); } 40% { transform: rotate(-30deg); } 55% { transform: rotate(-86deg); } }
+.nabi.act.pose-watch .arm-l { animation: nabi-watch 3.6s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.nabi.act.pose-watch .eyes { animation: nabi-watch-eyes 3.6s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.nabi.act.pose-tie .arm-r { animation: act-tie 1.6s ease-in-out 2; }
+@keyframes act-tie { 0%, 100% { transform: rotate(82deg); } 50% { transform: rotate(86deg) translateY(-2px); } }
+
+/* motions */
+.nabi.act.motion-read .eyes { animation: nabi-read 2.2s ease-in-out infinite; }
+.nabi.act.motion-read .face { transform: translate(0, 3px) !important; }
+.nabi.act.motion-bob .nabi-head { animation: act-bob 0.6s ease-in-out infinite; }
+@keyframes act-bob { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(1.6px) rotate(2deg); } }
+.nabi.act.motion-write .arm-r, .nabi.act.motion-write.pose-write .arm-r { animation: act-write 0.42s ease-in-out infinite; }
+@keyframes act-write { 0%, 100% { transform: rotate(72deg); } 50% { transform: rotate(78deg) translateX(1px); } }
+.nabi.act.motion-write .face { transform: translate(-1.5px, 2.6px) !important; }
+.nabi.act.pose-type .arm-r { animation: act-type 0.3s ease-in-out infinite; }
+.nabi.act.pose-type .arm-l { animation: act-type-l 0.3s ease-in-out 0.15s infinite; }
+@keyframes act-type { 0%, 100% { transform: rotate(60deg); } 50% { transform: rotate(64deg) translateY(1.5px); } }
+@keyframes act-type-l { 0%, 100% { transform: rotate(-60deg); } 50% { transform: rotate(-64deg) translateY(1.5px); } }
+.nabi.act.pose-type .face { transform: translate(0, 3px) !important; }
+.nabi.act.motion-point .arm-r { animation: act-point 1.6s ease-in-out infinite; }
+@keyframes act-point { 0%, 100% { transform: rotate(-88deg); } 50% { transform: rotate(-70deg); } }
+.nabi.act.motion-scan .arm-r { animation: act-scan 2.4s ease-in-out infinite; }
+.nabi.act.motion-scan .ph-r { animation: act-scan-prop 2.4s ease-in-out infinite; }
+@keyframes act-scan { 0%, 100% { transform: rotate(55deg); } 50% { transform: rotate(85deg); } }
+@keyframes act-scan-prop { 0%, 100% { transform: rotate(-55deg); } 50% { transform: rotate(-85deg); } }
+.nabi.act.motion-hammer .arm-r { animation: act-hammer 0.6s cubic-bezier(0.5, 0, 0.3, 1) infinite; }
+@keyframes act-hammer { 0%, 100% { transform: rotate(30deg); } 50% { transform: rotate(85deg); } }
+.nabi.act.motion-nap .lid { transform: scaleY(1.08) !important; }
+.nabi.act.motion-nap .zzz { opacity: 1; animation: nabi-zzz 3s ease-in infinite; }
+.nabi.act.motion-nap .nabi-float { animation-duration: 7s; }
+.nabi.act.motion-nap .mouth { opacity: 0; }
+
+/* the props' own life */
+.prop-steam path { animation: act-steam 2.4s ease-out infinite; }
+.prop-steam path:nth-child(2) { animation-delay: 0.8s; }
+@keyframes act-steam { 0% { transform: translateY(2px); opacity: 0; } 40% { opacity: 0.8; } 100% { transform: translateY(-6px); opacity: 0; } }
+.prop-notes text { animation: act-note 2.4s ease-out infinite; }
+.prop-notes text:nth-child(2) { animation-delay: 0.8s; }
+.prop-notes text:nth-child(3) { animation-delay: 1.6s; }
+@keyframes act-note { 0% { transform: translateY(6px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translate(4px, -10px) rotate(12deg); opacity: 0; } }
+.prop-yoyo { animation: act-yoyo 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite; }
+.prop-string { transform-origin: 50% 0%; animation: act-yoyo-string 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite; }
+@keyframes act-yoyo { 0%, 100% { transform: translateY(-14px); } 50% { transform: translateY(0); } }
+@keyframes act-yoyo-string { 0%, 100% { transform: scaleY(0.05); } 50% { transform: scaleY(1); } }
+.prop-balloon { transform-origin: 50% 100%; animation: act-balloon 3s ease-in-out infinite; }
+@keyframes act-balloon { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+.prop-plane { animation: act-plane 3s ease-out infinite; }
+@keyframes act-plane { 0%, 30% { transform: translate(-6px, -24px) rotate(-20deg); opacity: 0; } 34% { opacity: 1; } 100% { transform: translate(40px, -70px) rotate(-30deg); opacity: 0; } }
+.prop-juggle circle { animation: act-ball 0.8s ease-in-out infinite; }
+.prop-juggle .j2 { animation-delay: 0.27s; }
+.prop-juggle .j3 { animation-delay: 0.54s; }
+@keyframes act-ball { 0%, 100% { transform: translateY(18px); } 50% { transform: translateY(-30px); } }
+.prop-drops circle { animation: act-drop 0.8s linear infinite; }
+.prop-drops circle:nth-child(2) { animation-delay: 0.25s; }
+.prop-drops circle:nth-child(3) { animation-delay: 0.5s; }
+@keyframes act-drop { from { transform: translateY(0); opacity: 1; } to { transform: translateY(8px); opacity: 0; } }
+.prop-beam { animation: act-beam 2.2s ease-in-out infinite; }
+@keyframes act-beam { 0%, 100% { opacity: 0.18; } 50% { opacity: 0.34; } }
+.prop-cube { transform-box: fill-box; transform-origin: center; }
+.nabi.act.motion-twist .prop-cube { animation: act-twist 1.2s ease-in-out infinite; }
+@keyframes act-twist { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
+.prop-bubbles circle { animation: act-bubble 2.8s ease-out infinite; }
+.prop-bubbles .b2 { animation-delay: 0.9s; }
+.prop-bubbles .b3 { animation-delay: 1.8s; }
+@keyframes act-bubble { 0% { transform: translate(-10px, 14px) scale(0.3); opacity: 0; } 25% { opacity: 1; } 100% { transform: translate(4px, -20px) scale(1.1); opacity: 0; } }
+.prop-aura ellipse { transform-box: fill-box; transform-origin: center; animation: act-aura 3s ease-in-out infinite; }
+@keyframes act-aura { 0%, 100% { transform: scale(0.96); opacity: 0.15; } 50% { transform: scale(1.04); opacity: 0.4; } }
+.prop-flash circle { animation: act-flash 2.6s ease-out infinite; }
+@keyframes act-flash { 0%, 70%, 100% { opacity: 0; } 72% { opacity: 0.8; } }
+.prop-flag { transform-box: fill-box; transform-origin: 0% 50%; animation: act-flag 0.9s ease-in-out infinite; }
+@keyframes act-flag { 0%, 100% { transform: skewY(-4deg) scaleX(1); } 50% { transform: skewY(4deg) scaleX(0.94); } }
+.prop-sparkle path, .prop-stars circle, .prop-dizzy path { transform-box: fill-box; transform-origin: center; animation: act-twinkle 1.4s ease-in-out infinite; }
+.prop-sparkle path:nth-child(2), .prop-stars circle:nth-child(2), .prop-dizzy path:nth-child(2) { animation-delay: 0.6s; }
+@keyframes act-twinkle { 0%, 100% { transform: scale(0.5); opacity: 0.3; } 50% { transform: scale(1.2) rotate(30deg); opacity: 1; } }
+.prop-dizzy { transform-box: view-box; transform-origin: 60px 22px; animation: act-orbit 2s linear infinite; }
+@keyframes act-orbit { to { transform: rotate(360deg); } }
+.prop-swipe { animation: act-swipe 1.6s ease-in-out infinite; }
+@keyframes act-swipe { 0%, 40% { transform: translateX(0); opacity: 0.8; } 50% { transform: translateX(-6px); opacity: 0; } 60% { transform: translateX(6px); opacity: 0; } 70%, 100% { transform: translateX(0); opacity: 0.8; } }
+.prop-globe { transform-box: fill-box; transform-origin: center; animation: act-globe 2.4s linear infinite; }
+@keyframes act-globe { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(0.55); } }
+.prop-bulb { animation: act-bulb 2.2s ease-in-out infinite; }
+@keyframes act-bulb { 0%, 12% { opacity: 0; transform: translateY(4px) scale(0.7); } 20%, 100% { opacity: 1; transform: none; } }
+.prop-bulb circle { animation: act-beam 1.6s ease-in-out infinite; }
+.prop-chess { animation: act-float-prop 3s ease-in-out infinite; }
+@keyframes act-float-prop { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-3px) rotate(4deg); } }
+.prop-code rect { transform-box: fill-box; transform-origin: 0% 50%; animation: act-code 2.4s steps(6, end) infinite; }
+.prop-code rect:nth-child(2) { animation-delay: 0.4s; }
+.prop-code rect:nth-child(3) { animation-delay: 0.8s; }
+.prop-code rect:nth-child(4) { animation-delay: 1.2s; }
+@keyframes act-code { 0% { transform: scaleX(0); } 50%, 100% { transform: scaleX(1); } }
+.prop-gears .g1 { transform-box: fill-box; transform-origin: center; animation: act-orbit 3s linear infinite; }
+.prop-gears .g2 { transform-box: fill-box; transform-origin: center; animation: act-orbit 2s linear infinite reverse; }
+.prop-ink path { stroke-dasharray: 24; animation: act-ink 2.4s linear infinite; }
+@keyframes act-ink { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
+.prop-waves path { animation: act-wave-out 1.2s ease-out infinite; }
+.prop-waves path:nth-child(2) { animation-delay: 0.3s; }
+@keyframes act-wave-out { 0% { opacity: 0; } 40% { opacity: 1; } 100% { opacity: 0; } }
+.prop-sand { animation: act-beam 1.4s ease-in-out infinite; }
+.prop-hourglass { transform-box: fill-box; transform-origin: center; animation: act-flip 4s ease-in-out infinite; }
+@keyframes act-flip { 0%, 80% { transform: rotate(0deg); } 95%, 100% { transform: rotate(180deg); } }
+.prop-confetti rect { animation: act-confetti 1.8s ease-in infinite; }
+.prop-confetti .c1 { animation-delay: 0.5s; }
+.prop-confetti .c2 { animation-delay: 1s; }
+@keyframes act-confetti { 0% { transform: translateY(-6px) rotate(0deg); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(40px) rotate(260deg); opacity: 0; } }
+.prop-rain path { animation: act-rain 0.7s linear infinite; }
+.prop-rain path:nth-child(2) { animation-delay: 0.23s; }
+.prop-rain path:nth-child(3) { animation-delay: 0.46s; }
+@keyframes act-rain { from { transform: translateY(0); opacity: 1; } to { transform: translateY(14px); opacity: 0; } }
+.prop-approved { transform-box: fill-box; transform-origin: center; animation: act-approve 1.4s cubic-bezier(0.5, 0, 0.3, 1) infinite; }
+@keyframes act-approve { 0%, 50% { opacity: 0; transform: scale(1.6); } 58%, 100% { opacity: 1; transform: none; } }
+.prop-board { animation: act-float-prop 4s ease-in-out infinite; }
+.prop-star, .prop-trophy { transform-box: fill-box; transform-origin: center; }
+
+/* moves: the whole character travels — the shadow stays on the ground */
+.nabi-move { transform-box: view-box; transform-origin: 60px 80px; }
+.nabi.act.move-drift .nabi-move { animation: move-drift var(--act-ms, 6500ms) ease-in-out infinite; }
+@keyframes move-drift { 0%, 100% { transform: translateX(0); } 25%, 45% { transform: translateX(-14px) rotate(-3deg); } 70%, 85% { transform: translateX(12px) rotate(3deg); } }
+.nabi.act.move-sway .nabi-move { animation: move-sway 1.4s ease-in-out infinite; }
+@keyframes move-sway { 0%, 100% { transform: translateX(-3px) rotate(-4deg); } 50% { transform: translateX(3px) rotate(4deg); } }
+.nabi.act.move-high .nabi-move { animation: move-high var(--act-ms, 6500ms) ease-in-out infinite; }
+@keyframes move-high { 0%, 100% { transform: translateY(0); } 20%, 80% { transform: translateY(-10px); } }
+.nabi.act.move-loop .nabi-move { transform-origin: 60px 60px; animation: move-loop var(--act-ms, 3200ms) cubic-bezier(0.5, 0, 0.3, 1) infinite; }
+@keyframes move-loop { 0%, 12% { transform: translateY(0) rotate(0deg); } 22% { transform: translateY(-16px) rotate(0deg); } 62% { transform: translateY(-16px) rotate(360deg); } 78% { transform: translateY(3px) rotate(360deg); } 88%, 100% { transform: translateY(0) rotate(360deg); } }
+.nabi.act.move-zip .nabi-move { animation: move-zip var(--act-ms, 2800ms) cubic-bezier(0.5, 0, 0.3, 1) infinite; }
+@keyframes move-zip { 0% { transform: translateY(0); } 12% { transform: translateY(4px) scaleY(0.9); } 24% { transform: translateY(-60px); } 52% { transform: translateY(-60px); } 66% { transform: translateY(6px) scaleY(0.92); } 76% { transform: translateY(-3px); } 86%, 100% { transform: translateY(0); } }
+.nabi.act.move-zip .flame, .nabi.act.move-loop .flame { animation-name: nabi-flame-up; }
+.nabi.act.move-tumble .nabi-move { transform-origin: 60px 80px; animation: move-tumble var(--act-ms, 2600ms) cubic-bezier(0.4, 0, 0.3, 1) infinite; }
+@keyframes move-tumble { 0%, 15% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-22px) rotate(-180deg); } 80% { transform: translateY(0) rotate(-360deg); } 100% { transform: rotate(-360deg); } }
+.nabi.act.move-hops .nabi-move { animation: move-hops var(--act-ms, 2600ms) ease-in-out infinite; }
+@keyframes move-hops { 0%, 100% { transform: translateY(0); } 12% { transform: translateY(-12px); } 24% { transform: translateY(0) scaleY(0.94); } 36% { transform: translateY(-9px); } 48% { transform: translateY(0); } 60% { transform: translateY(-6px); } 72% { transform: translateY(0); } }
+
+/* lids: half-lowered when it concentrates, shut when it naps */
+.lid { transform-box: fill-box; transform-origin: 50% 0%; transform: scaleY(0); transition: transform 0.3s ease; }
+.nabi--working .lid, .nabi--stopped .lid { transform: scaleY(0.28); }
+.nabi--annoyed .lid, .nabi--angry .lid { transform: scaleY(0.42); }
+.nabi--focus .lid { transform: scaleY(0.2); }
+
+@media (prefers-reduced-motion: reduce) { .nabi .nabi-move { animation: none !important; } }
+
+/* reactions to the person */
+.pose-sweep { --ar: 40deg; }
+.nabi.act.pose-sweep .arm-r { animation: act-sweep 0.5s ease-in-out infinite; }
+.nabi.act.pose-sweep .ph-r { animation: act-sweep-prop 0.5s ease-in-out infinite; }
+@keyframes act-sweep { 0%, 100% { transform: rotate(25deg); } 50% { transform: rotate(60deg); } }
+@keyframes act-sweep-prop { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(-45deg); } }
+.prop-incoming { animation: act-incoming 1.2s cubic-bezier(0.3, 0.7, 0.3, 1) both; }
+@keyframes act-incoming { 0% { transform: translate(-30px, 30px) rotate(10deg); opacity: 0; } 20% { opacity: 1; } 80% { transform: translate(62px, -50px) rotate(-30deg); opacity: 1; } 100% { transform: translate(66px, -54px) scale(0.2); opacity: 0; } }
+.prop-thumb { transform-box: fill-box; transform-origin: 50% 100%; animation: act-thumb 0.6s cubic-bezier(0.2, 1.6, 0.4, 1) both; }
+@keyframes act-thumb { from { transform: scale(0.3); } to { transform: none; } }
+.has-camera .prop-flash circle { animation: act-flash 1.6s ease-out 0.5s 1 both; }
+/* flying across the stage: a lean into the flight and a full flame */
+.char.flying .nabi-move { transform: rotate(var(--fly-tilt, -10deg)); transition: transform 0.25s ease; }
+.char.flying .flame { animation-name: nabi-flame-up; }
+
+/* the subject of the question */
+.pose-stir { --ar: 64deg; }
+.nabi.act.motion-stir .arm-r { animation: act-stir 0.9s ease-in-out infinite; }
+@keyframes act-stir { 0%, 100% { transform: rotate(56deg) translateX(-1px); } 50% { transform: rotate(72deg) translateX(2px); } }
+.nabi.act.motion-stir .face { transform: translate(0, 3px) !important; }
+.prop-calc .key { animation: act-key-tap 1.2s steps(1, end) infinite; }
+.prop-calc .k1 { animation-delay: 0.4s; }
+.prop-calc .k2 { animation-delay: 0.8s; }
+@keyframes act-key-tap { 0%, 30% { fill: #74c6ff; } 31%, 100% { fill: #3a4566; } }
+.nabi.act.motion-tap .arm-r { animation: act-tap 0.5s ease-in-out infinite; }
+@keyframes act-tap { 0%, 100% { transform: rotate(70deg); } 50% { transform: rotate(76deg) translateY(1px); } }
+.prop-sun .rays { transform-box: view-box; transform-origin: 100px 18px; animation: act-orbit 8s linear infinite; }
+.prop-lovehearts path { transform-box: fill-box; transform-origin: center; animation: nabi-hearts 1.6s ease-in-out infinite; }
+.prop-lovehearts .h2 { animation-delay: 0.5s; }
+.prop-lovehearts .h3 { animation-delay: 1s; }
+.has-lovehearts .blush ellipse { opacity: 0.6 !important; }
+.has-lovehearts .eye-arc, .has-lovehearts .eye { transform-origin: center; }
+.prop-coins { animation: act-float-prop 2.4s ease-in-out infinite; }
+.prop-clock-hands .mh { transform-box: fill-box; transform-origin: 0% 50%; animation: act-orbit 2s linear infinite; }
+.prop-clock-hands .hh { transform-box: fill-box; transform-origin: 50% 100%; animation: act-orbit 12s linear infinite; }
+.prop-fizz circle { animation: act-bubble 1.6s ease-out infinite; }
+.prop-fizz circle:nth-child(2) { animation-delay: 0.5s; }
+.prop-fizz circle:nth-child(3) { animation-delay: 1s; }
+.prop-ball { transform-box: fill-box; transform-origin: center; animation: act-ball-spin 1.4s linear infinite; }
+@keyframes act-ball-spin { to { transform: rotate(360deg); } }
+
+/* thrown: the eyes spin and the head wobbles */
+.nabi.act.motion-dizzy .eyes { animation: act-dizzy-eyes 0.5s linear infinite; }
+@keyframes act-dizzy-eyes { 0% { transform: translate(-2px, 0); } 25% { transform: translate(0, -2px); } 50% { transform: translate(2px, 0); } 75% { transform: translate(0, 2px); } 100% { transform: translate(-2px, 0); } }
+.nabi.act.motion-dizzy .nabi-head { animation: act-wobble 0.6s ease-in-out infinite; }
+@keyframes act-wobble { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+.nabi.act.motion-dizzy .lid { transform: scaleY(0.35); }
+
+/* ===== What it wears (the companion page) =========================================================== */
+.head-busy .acc-head { display: none; }
+.nabi--dressed .acc { display: none; }
+.acc-cape { transform-box: view-box; transform-origin: 60px 84px; animation: acc-cape 3.4s ease-in-out infinite; }
+@keyframes acc-cape { 0%, 100% { transform: skewX(0deg) scaleX(1); } 50% { transform: skewX(-3deg) scaleX(1.03); } }
+.scarf-tail { transform-box: fill-box; transform-origin: 30% 0%; animation: acc-tail 2.6s ease-in-out infinite; }
+@keyframes acc-tail { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(6deg); } }
+.acc-flower { transform-box: view-box; transform-origin: 27px 30px; animation: acc-flower 6s ease-in-out infinite; }
+@keyframes acc-flower { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+.acc-crown circle { animation: nabi-glow 2.4s ease-in-out infinite; }
+/* a fresh paint: the shell colour eases in */
+.nabi { transition: filter 0.25s ease; }
+
+/* occasions */
+.prop-lantern { transform-box: fill-box; transform-origin: 50% 0%; animation: act-lantern 3s ease-in-out infinite; }
+@keyframes act-lantern { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+.lantern-flame { animation: act-flicker 0.9s ease-in-out infinite alternate; }
+.lantern-glass { animation: act-beam 2.4s ease-in-out infinite; }
+@keyframes act-flicker { from { opacity: 0.7; transform: scale(0.9); } to { opacity: 1; transform: scale(1.12); } }
+.prop-fireworks .burst { transform-box: fill-box; transform-origin: center; animation: act-burst 1.8s ease-out infinite; }
+.prop-fireworks .b1 { animation-delay: 0.6s; }
+.prop-fireworks .b2 { animation-delay: 1.2s; }
+@keyframes act-burst { 0% { transform: scale(0.2); opacity: 0; } 20% { opacity: 1; } 70% { transform: scale(1.2); opacity: 0.8; } 100% { transform: scale(1.4); opacity: 0; } }
+
+/* ===== Its friends ================================================================================== */
+.pet-fly { transform-box: view-box; animation: pet-route 11s ease-in-out infinite; }
+@keyframes pet-route {
+  0%, 30% { transform: translate(0, 0); }
+  15% { transform: translate(-2px, -5px); }
+  42% { transform: translate(-30px, -42px); }
+  54% { transform: translate(-88px, -6px); }
+  62%, 78% { transform: translate(-92px, 2px); }
+  70% { transform: translate(-90px, -4px); }
+  90% { transform: translate(-40px, -46px); }
+  100% { transform: translate(0, 0); }
+}
+.pet-art { transform-box: fill-box; transform-origin: center; animation: pet-bob 1.6s ease-in-out infinite; }
+@keyframes pet-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+.pet-drone .rotor { transform-box: fill-box; transform-origin: center; animation: pet-rotor 0.18s linear infinite; }
+@keyframes pet-rotor { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(0.25); } }
+.pet-drone .pet-eye { animation: nabi-glow 2s ease-in-out infinite; }
+.pet-bird .wing { transform-box: fill-box; transform-origin: 90% 60%; animation: pet-flap 0.28s ease-in-out infinite; }
+@keyframes pet-flap { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-38deg); } }
+.pet-sprite { filter: drop-shadow(0 0 4px rgba(255, 231, 163, 0.7)); }
+.pet-sprite .trail circle { animation: act-twinkle 1.2s ease-in-out infinite; }
+.pet-sprite .trail circle:nth-child(2) { animation-delay: 0.3s; }
+.pet-sprite .trail circle:nth-child(3) { animation-delay: 0.6s; }
+/* while it naps, its friend rests too */
+.motion-nap .pet-fly, .nabi--sleeping .pet-fly { animation-duration: 30s; }

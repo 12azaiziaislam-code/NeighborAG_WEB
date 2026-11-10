@@ -1,0 +1,27 @@
+{
+  "name": "neighboragi-web",
+  "private": true,
+  "version": "1.0.0",
+  "description": "NeighborAGI commercial site, accounts, licensing and admin (Cloudflare Workers + D1 + R2)",
+  "type": "module",
+  "scripts": {
+    "dev:web": "vite --config web/vite.config.mjs",
+    "build": "vite build --config web/vite.config.mjs",
+    "dev": "wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "db:init": "wrangler d1 execute neighboragi --remote --file migrations/0001_init.sql",
+    "db:init:local": "wrangler d1 execute neighboragi --local --file migrations/0001_init.sql"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "4.3.4",
+    "vite": "5.4.11",
+    "wrangler": "3.95.0"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "three": "0.171.0",
+    "@react-three/fiber": "8.17.10",
+    "@react-three/drei": "9.117.3"
+  }
+}
