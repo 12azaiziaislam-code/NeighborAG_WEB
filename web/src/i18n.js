@@ -200,6 +200,6 @@ Object.assign(S.ru, {
   spec_privacy: 'Приватность', spec_updates: 'Обновления', spec_platform: 'Платформа', spec_lang: 'Языки',
   cta_title: 'Поселите компаньона на рабочем столе.', focus_a: 'Компаньон', mock_summary: 'Сводка', mock_reply: 'Черновик ответа',
 })
-Object.assign(S.en, { admin_u_h: 'hours', admin_u_d: 'days', admin_u_mo: 'months', admin_u_y: 'years', admin_all: 'All', admin_joined: 'Joined' })
-Object.assign(S.ar, { admin_u_h: 'ساعات', admin_u_d: 'أيام', admin_u_mo: 'أشهر', admin_u_y: 'سنوات', admin_all: 'الكل', admin_joined: 'تاريخ التسجيل' })
-Object.assign(S.ru, { admin_u_h: 'часы', admin_u_d: 'дни', admin_u_mo: 'месяцы', admin_u_y: 'годы', admin_all: 'Все', admin_joined: 'Регистрация' })
+Object.assign(S.en, { admin_u_m: 'minutes', admin_u_h: 'hours', admin_u_d: 'days', admin_u_mo: 'months', admin_u_y: 'years', admin_all: 'All', admin_joined: 'Joined' })
+Object.assign(S.ar, { admin_u_m: 'دقائق', admin_u_h: 'ساعات', admin_u_d: 'أيام', admin_u_mo: 'أشهر', admin_u_y: 'سنوات', admin_all: 'الكل', admin_joined: 'تاريخ التسجيل' })
+Object.assign(S.ru, { admin_u_m: 'минуты', admin_u_h: 'часы', admin_u_d: 'дни', admin_u_mo: 'месяцы', admin_u_y: 'годы', admin_all: 'Все', admin_joined: 'Регистрация' })

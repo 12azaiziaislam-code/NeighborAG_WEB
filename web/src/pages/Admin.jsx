@@ -5,7 +5,7 @@ import { api, getAdminToken, setAdminToken } from '../api.js'
 import SupportChat from '../components/SupportChat.jsx'
 
 const HOUR = 3600000
-const UNIT_MS = { h: HOUR, d: 24 * HOUR, mo: 30 * 24 * HOUR, y: 365 * 24 * HOUR }
+const UNIT_MS = { m: 60000, h: HOUR, d: 24 * HOUR, mo: 30 * 24 * HOUR, y: 365 * 24 * HOUR }
 const PRESETS = [[7, 'd'], [30, 'd'], [3, 'mo'], [1, 'y']]
 const fmt = (ts) => (ts ? new Date(ts).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : '—')
 const fmtDay = (ts) => (ts ? new Date(ts).toLocaleDateString(undefined, { dateStyle: 'medium' }) : '—')
@@ -34,8 +34,8 @@ const I = {
 // One amount + one unit, with the common choices a click away. Replaces five cramped number boxes.
 function Duration({ value, onChange }) {
   const { t } = useI18n()
-  const unitLabel = { h: t('admin_u_h'), d: t('admin_u_d'), mo: t('admin_u_mo'), y: t('admin_u_y') }
-  const short = { h: t('admin_hours'), d: t('admin_days'), mo: t('admin_months'), y: t('admin_years') }
+  const unitLabel = { m: t('admin_u_m'), h: t('admin_u_h'), d: t('admin_u_d'), mo: t('admin_u_mo'), y: t('admin_u_y') }
+  const short = { m: t('admin_minutes'), h: t('admin_hours'), d: t('admin_days'), mo: t('admin_months'), y: t('admin_years') }
   return (
     <div className="dur">
       <div className="dur-presets">
