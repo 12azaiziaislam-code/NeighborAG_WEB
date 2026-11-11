@@ -3,30 +3,30 @@ import { useI18n } from '../i18n.js'
 import { Link, useAuth } from '../App.jsx'
 import Pixel from '../avatar/Pixel.jsx'
 
-function Icon({ name }) {
-  const p = {
-    spark: 'M12 2l2.4 6.3L21 10.7l-5.1 4.2L17.6 22 12 18.1 6.4 22l1.7-7.1L3 10.7l6.6-2.4z',
-    shield: 'M12 2l8 3.2v6.4c0 5-3.3 8.6-8 10.4-4.7-1.8-8-5.4-8-10.4V5.2z',
-    sync: 'M20 10a8 8 0 0 0-14.9-3M4 14a8 8 0 0 0 14.9 3M4 3v4.5h4.5M20 21v-4.5h-4.5',
-    sparkle: 'M12 3v5m0 8v5M3 12h5m8 0h5M6 6l3 3m6 6l3 3m0-12l-3 3M9 15l-3 3',
-    focus: 'M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M12 12h.01',
-    lock: 'M6 10V8a6 6 0 0 1 12 0v2M5 10h14v10H5zM12 15v2',
-    check: 'M20 6L9 17l-5-5',
-  }
-  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d={p[name]} /></svg>
+const PATHS = {
+  screen: 'M3 5h18v11H3zM8 20h8M12 16v4',
+  shield: 'M12 3l7 3v5.5c0 4.4-2.9 7.6-7 9.5-4.1-1.9-7-5.1-7-9.5V6zM9 12l2 2 4-4',
+  sync: 'M20 11a8 8 0 0 0-14.6-3.5M4 13a8 8 0 0 0 14.6 3.5M4 4v4h4M20 20v-4h-4',
+  smile: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM8.5 14.5a4.5 4.5 0 0 0 7 0M9 10h.01M15 10h.01',
+  focus: 'M4 9V5h4M16 5h4v4M20 15v4h-4M8 19H4v-4M12 12h.01',
+  lock: 'M7 11V8a5 5 0 0 1 10 0v3M5 11h14v9H5zM12 15v2',
+  windows: 'M3 5.5l8-1.1v7.1H3zM12.5 4.2L21 3v8.5h-8.5zM3 13h8v7.1l-8-1.1zM12.5 13H21v8l-8.5-1.2z',
+  arrow: 'M5 12h14M13 6l6 6-6 6',
+  plus: 'M12 5v14M5 12h14',
+  chat: 'M4 5h16v11H9l-5 4z',
+  grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+  cog: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1',
+}
+export function Icon({ name, fill = false }) {
+  return <svg viewBox="0 0 24 24" aria-hidden="true" className={fill ? 'ic ic--fill' : 'ic'}><path d={PATHS[name]} /></svg>
 }
 
 const FEATURES = [
-  ['spark', 'f_beside_t', 'f_beside_d'], ['shield', 'f_private_t', 'f_private_d'],
-  ['sync', 'f_current_t', 'f_current_d'], ['sparkle', 'f_character_t', 'f_character_d'],
+  ['screen', 'f_beside_t', 'f_beside_d'], ['shield', 'f_private_t', 'f_private_d'],
+  ['sync', 'f_current_t', 'f_current_d'], ['smile', 'f_character_t', 'f_character_d'],
   ['focus', 'f_focused_t', 'f_focused_d'], ['lock', 'f_secure_t', 'f_secure_d'],
 ]
-const MODES = [
-  ['idle', false, 'Companion', 'cap_companion'],
-  ['thinking', true, 'Focused mode', 'cap_focused'],
-  ['done', false, 'Control Center', 'cap_control'],
-]
-const TRUST = ['trust_dev', 'trust_sign', 'trust_win', 'trust_lang']
+const SPECS = [['spec_privacy', 'trust_dev'], ['spec_updates', 'trust_sign'], ['spec_platform', 'trust_win'], ['spec_lang', 'trust_lang']]
 const HOW = [['how_1_t', 'how_1_d'], ['how_2_t', 'how_2_d'], ['how_3_t', 'how_3_d'], ['how_4_t', 'how_4_d']]
 const FAQ = [['faq_1_q', 'faq_1_a'], ['faq_2_q', 'faq_2_a'], ['faq_3_q', 'faq_3_a'], ['faq_4_q', 'faq_4_a'], ['faq_5_q', 'faq_5_a']]
 
@@ -38,11 +38,52 @@ function Faq() {
       {FAQ.map(([q, a], i) => (
         <div className={`faq-item ${open === i ? 'open' : ''}`} key={q}>
           <button className="faq-q" onClick={() => setOpen(open === i ? -1 : i)} aria-expanded={open === i}>
-            <span>{t(q)}</span><span className="faq-ic">{open === i ? '−' : '+'}</span>
+            <span>{t(q)}</span><span className="faq-ic"><Icon name="plus" /></span>
           </button>
           {open === i && <div className="faq-a">{t(a)}</div>}
         </div>
       ))}
+    </div>
+  )
+}
+
+// The product as it sits on a Windows desktop: the chat window, and the companion docked beside it.
+function ProductShot() {
+  const { t } = useI18n()
+  return (
+    <div className="stage fade-in" aria-hidden="true">
+      <div className="desk">
+        <div className="win">
+          <div className="win-bar">
+            <span className="win-title">NeighborAGI</span>
+            <span className="win-ctl"><i className="c-min" /><i className="c-max" /><i className="c-x" /></span>
+          </div>
+          <div className="win-body">
+            <aside className="win-rail">
+              <span className="on"><Icon name="chat" /></span><span><Icon name="grid" /></span><span><Icon name="focus" /></span><span className="rail-end"><Icon name="cog" /></span>
+            </aside>
+            <div className="win-chat">
+              <div className="m m--user">{t('mock_user')}</div>
+              <div className="m m--bot">
+                <p>{t('mock_bot')}</p>
+                <div className="m-block">
+                  <b>{t('mock_summary')}</b>
+                  <i style={{ width: '92%' }} /><i style={{ width: '78%' }} /><i style={{ width: '64%' }} />
+                </div>
+                <div className="m-block">
+                  <b>{t('mock_reply')}</b>
+                  <i style={{ width: '86%' }} /><i style={{ width: '52%' }} />
+                </div>
+              </div>
+              <div className="win-input"><span>{t('support_ph')}</span><kbd>Enter</kbd></div>
+            </div>
+          </div>
+        </div>
+        <div className="desk-pet">
+          <Pixel state="idle" scale={3.4} look={[1, 1]} />
+          <kbd>Ctrl + B</kbd>
+        </div>
+      </div>
     </div>
   )
 }
@@ -54,129 +95,103 @@ export default function Home() {
   return (
     <div className="home">
       <section className="hero">
-        <div className="wrap hero-grid">
-          <div className="hero-copy fade-in">
-            <span className="eyebrow">{t('hero_badge')}</span>
-            <h1>{t('hero_title')}</h1>
-            <p className="lede">{t('hero_sub')}</p>
-            <div className="hero-cta">
-              <Link to="/download" className="btn btn--primary btn--lg">{t('hero_cta')}</Link>
-              <Link to="/#features" className="btn btn--ghost btn--lg">{t('hero_see')}</Link>
-            </div>
-            <ul className="trust">
-              {TRUST.map((k) => (
-                <li key={k}><span className="trust-ic"><Icon name="check" /></span>{t(k)}</li>
-              ))}
-            </ul>
+        <div className="wrap">
+          <Link to="/download" className="announce fade-in"><i />{t('hero_badge')}<Icon name="arrow" /></Link>
+          <h1 className="fade-in">{t('hero_title')}</h1>
+          <p className="lede fade-in">{t('hero_sub')}</p>
+          <div className="hero-cta fade-in">
+            <Link to="/download" className="btn btn--primary btn--lg"><Icon name="windows" fill />{t('hero_cta')}</Link>
+            <Link to="/#features" className="btn btn--lg">{t('hero_see')}</Link>
           </div>
+          <ProductShot />
+        </div>
+      </section>
 
-          {/* A realistic desktop-app window — the product, not a floating mascot. */}
-          <div className="hero-shot fade-in">
-            <div className="appwin">
-              <div className="appwin-bar">
-                <i /><i /><i />
-                <span className="appwin-title">NeighborAGI</span>
-              </div>
-              <div className="appwin-body">
-                <aside className="appwin-rail">
-                  <span className="rail-dot on" /><span className="rail-dot" /><span className="rail-dot" /><span className="rail-dot" />
-                </aside>
-                <div className="appwin-chat">
-                  <div className="mock-msg user">{t('mock_user')}</div>
-                  <div className="mock-msg bot">{t('mock_bot')}</div>
-                  <div className="appwin-input"><span>{t('support_ph')}</span><b>↵</b></div>
-                </div>
-              </div>
-            </div>
-            <div className="appwin-pet"><Pixel state="idle" scale={3.3} look={[1, 1]} /></div>
-          </div>
+      <section className="specs">
+        <div className="wrap specs-row">
+          {SPECS.map(([label, value]) => (
+            <div className="spec" key={label}><span>{t(label)}</span><b>{t(value)}</b></div>
+          ))}
         </div>
       </section>
 
       <section className="section reveal" id="features">
-        <div className="sect-head center">
-          <span className="eyebrow">{t('nav_features')}</span>
-          <h2>{t('features_title')}</h2>
-          <p>{t('features_sub')}</p>
-        </div>
-        <div className="feature-grid">
-          {FEATURES.map(([icon, tt, td]) => (
-            <article className="feature" key={tt}>
-              <span className="feature-ic"><Icon name={icon} /></span>
-              <h3>{t(tt)}</h3>
-              <p>{t(td)}</p>
-            </article>
-          ))}
+        <div className="wrap">
+          <div className="sect-head">
+            <span className="eyebrow">{t('nav_features')}</span>
+            <h2>{t('features_title')}</h2>
+            <p>{t('features_sub')}</p>
+          </div>
+          <div className="bento">
+            {FEATURES.map(([icon, tt, td]) => (
+              <article className="cell" key={tt}>
+                <span className="cell-ic"><Icon name={icon} /></span>
+                <h3>{t(tt)}</h3>
+                <p>{t(td)}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Focused mode — its own spotlight. */}
-      <section className="section spotlight reveal">
-        <div className="spot-grid">
-          <div className="spot-copy">
-            <span className="eyebrow eyebrow--v">{t('focus_eyebrow')}</span>
+      <section className="section reveal" id="focused">
+        <div className="wrap split">
+          <div className="split-copy">
+            <span className="eyebrow">{t('focus_eyebrow')}</span>
             <h2>{t('focus_title')}</h2>
-            <p className="lede">{t('focus_sub')}</p>
-            <ul className="spot-list">
+            <p className="split-sub">{t('focus_sub')}</p>
+            <ul className="ticks">
               <li>{t('focus_1')}</li><li>{t('focus_2')}</li><li>{t('focus_3')}</li>
             </ul>
-            <div className="kbd-row"><kbd>{t('focus_kbd')}</kbd></div>
+            <div className="kbd-row"><kbd>Ctrl</kbd><span>+</span><kbd>Space</kbd></div>
           </div>
-          <div className="spot-shot">
-            <div className="focus-win">
-              <div className="appwin-bar focus-bar"><i /><i /><i /><span className="appwin-title">{t('focus_eyebrow')}</span></div>
-              <div className="focus-stage"><Pixel state="thinking" serious scale={4.6} look={[1, 1]} /></div>
+          <div className="duo" aria-hidden="true">
+            <div className="duo-half">
+              <span className="duo-tag">{t('focus_a')}</span>
+              <Pixel state="idle" scale={3.6} look={[1, 1]} />
+              <span className="duo-cap">{t('cap_companion')}</span>
             </div>
-            <div className="focus-win focus-win--playful">
-              <div className="appwin-bar"><i /><i /><i /><span className="appwin-title">Companion</span></div>
-              <div className="focus-stage focus-stage--playful"><Pixel state="idle" scale={3.2} look={[1, 1]} /></div>
+            <div className="duo-half duo-half--on">
+              <span className="duo-tag">{t('focus_eyebrow')}</span>
+              <Pixel state="thinking" serious scale={3.6} look={[1, 1]} />
+              <span className="duo-cap">{t('cap_focused')}</span>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="section reveal">
-        <div className="sect-head center">
-          <h2>{t('shots_title')}</h2>
-          <p>{t('shots_sub')}</p>
-        </div>
-        <div className="modes">
-          {MODES.map(([pose, serious, label, capKey]) => (
-            <div className="mode" key={label}>
-              <div className="appwin-bar"><i /><i /><i /><span className="appwin-title">{label}</span></div>
-              <div className="mode-scene"><Pixel state={pose} serious={serious} scale={3.2} look={[1, 1]} /></div>
-              <div className="mode-cap"><b>{label}</b><span>{t(capKey)}</span></div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="section how-sec reveal">
-        <div className="sect-head center">
-          <h2>{t('how_title')}</h2>
-          <p>{t('how_sub')}</p>
-        </div>
-        <div className="how-grid">
-          {HOW.map(([tt, td], i) => (
-            <div className="how-step" key={tt}>
-              <span className="how-num">{i + 1}</span>
-              <h3>{t(tt)}</h3>
-              <p>{t(td)}</p>
-            </div>
-          ))}
+      <section className="section reveal" id="how">
+        <div className="wrap">
+          <div className="sect-head">
+            <span className="eyebrow">{t('how_title')}</span>
+            <h2>{t('how_sub')}</h2>
+          </div>
+          <ol className="steps">
+            {HOW.map(([tt, td], i) => (
+              <li className="step" key={tt}>
+                <span className="step-n">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{t(tt)}</h3>
+                <p>{t(td)}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
-      <section className="section faq-sec reveal">
-        <div className="sect-head center"><h2>{t('faq_title')}</h2></div>
-        <Faq />
+      <section className="section reveal" id="faq">
+        <div className="wrap faq-grid">
+          <div className="sect-head"><span className="eyebrow">{t('nav_faq')}</span><h2>{t('faq_title')}</h2></div>
+          <Faq />
+        </div>
       </section>
 
-      <section className="section reveal" style={{ paddingTop: 0 }}>
-        <div className="cta-band">
-          <h2>{t('download_title')}</h2>
-          <p>{t('download_need_login')}</p>
-          <Link to="/download" className="btn btn--primary btn--lg">{user ? t('download_now') : t('download_go')}</Link>
+      <section className="section section--cta reveal">
+        <div className="wrap">
+          <div className="cta">
+            <h2>{t('cta_title')}</h2>
+            <p>{t('download_need_login')}</p>
+            <Link to="/download" className="btn btn--primary btn--lg"><Icon name="windows" fill />{user ? t('download_now') : t('hero_cta')}</Link>
+          </div>
         </div>
       </section>
     </div>

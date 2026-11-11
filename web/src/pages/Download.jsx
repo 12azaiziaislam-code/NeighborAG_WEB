@@ -56,7 +56,7 @@ export default function Download() {
           </div>
         ) : (
           <div className="auth-card fade-in center">
-            <h1>{t('download_start')} ✓</h1>
+            <h1>{t('download_start')}</h1>
             <p className="auth-lede muted">{t('download_need_login').split('.')[0]}.</p>
             <button className="btn btn--primary btn--lg" onClick={() => api.download().then((r) => r.url && window.location.assign(r.url))}>{t('download_now')}</button>
             <div className="dl-steps">

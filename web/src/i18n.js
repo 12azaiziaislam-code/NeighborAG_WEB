@@ -180,3 +180,26 @@ export function I18nProvider({ children }) {
 }
 
 export const useI18n = () => useContext(I18nContext)
+
+// Strings added with the redesign; merged in so each language block above stays untouched.
+Object.assign(S.en, {
+  foot_product: 'Product', foot_rights: 'All rights reserved.', nav_faq: 'FAQ',
+  auth_login_sub: 'Sign in to your account to continue.', auth_signup_sub: 'One account for the website and the program.',
+  spec_privacy: 'Privacy', spec_updates: 'Updates', spec_platform: 'Platform', spec_lang: 'Languages',
+  cta_title: 'Put a companion on your desktop.', focus_a: 'Companion', mock_summary: 'Summary', mock_reply: 'Draft reply',
+})
+Object.assign(S.ar, {
+  foot_product: 'المنتج', foot_rights: 'جميع الحقوق محفوظة.', nav_faq: 'الأسئلة',
+  auth_login_sub: 'سجّل الدخول إلى حسابك للمتابعة.', auth_signup_sub: 'حساب واحد للموقع والبرنامج.',
+  spec_privacy: 'الخصوصية', spec_updates: 'التحديثات', spec_platform: 'المنصّة', spec_lang: 'اللغات',
+  cta_title: 'ضع رفيقًا على سطح مكتبك.', focus_a: 'الرفيق', mock_summary: 'الملخّص', mock_reply: 'مسودة الردّ',
+})
+Object.assign(S.ru, {
+  foot_product: 'Продукт', foot_rights: 'Все права защищены.', nav_faq: 'Вопросы',
+  auth_login_sub: 'Войдите в аккаунт, чтобы продолжить.', auth_signup_sub: 'Один аккаунт для сайта и программы.',
+  spec_privacy: 'Приватность', spec_updates: 'Обновления', spec_platform: 'Платформа', spec_lang: 'Языки',
+  cta_title: 'Поселите компаньона на рабочем столе.', focus_a: 'Компаньон', mock_summary: 'Сводка', mock_reply: 'Черновик ответа',
+})
+Object.assign(S.en, { admin_u_h: 'hours', admin_u_d: 'days', admin_u_mo: 'months', admin_u_y: 'years', admin_all: 'All', admin_joined: 'Joined' })
+Object.assign(S.ar, { admin_u_h: 'ساعات', admin_u_d: 'أيام', admin_u_mo: 'أشهر', admin_u_y: 'سنوات', admin_all: 'الكل', admin_joined: 'تاريخ التسجيل' })
+Object.assign(S.ru, { admin_u_h: 'часы', admin_u_d: 'дни', admin_u_mo: 'месяцы', admin_u_y: 'годы', admin_all: 'Все', admin_joined: 'Регистрация' })

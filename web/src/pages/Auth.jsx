@@ -53,7 +53,7 @@ export default function Auth({ mode }) {
       <main className="auth-main">
         <div className="auth-card fade-in">
           <h1>{signup ? t('auth_signup_t') : t('auth_login_t')}</h1>
-          <p className="auth-lede muted">{signup ? t('download_need_login').split('.')[0] + '.' : t('auth_login_t')}</p>
+          <p className="auth-lede muted">{signup ? t('auth_signup_sub') : t('auth_login_sub')}</p>
           <form onSubmit={submit}>
             {signup ? (
               <>
@@ -69,7 +69,7 @@ export default function Auth({ mode }) {
               {busy ? <span className="spin" /> : (signup ? t('auth_signup_btn') : t('auth_login_btn'))}
             </button>
           </form>
-          <div className="center muted auth-switch">
+          <div className="auth-switch">
             {signup ? <Link to="/login">{t('auth_to_login')}</Link> : <Link to="/signup">{t('auth_to_signup')}</Link>}
           </div>
         </div>

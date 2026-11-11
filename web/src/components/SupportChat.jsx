@@ -60,7 +60,7 @@ export default function SupportChat({ mine, load, send }) {
       <form className="chat-input" onSubmit={submit}>
         {image && <div className="chat-preview"><img src={image} alt="" /><button type="button" onClick={() => setImage(null)}>✕</button></div>}
         <label className="chat-attach" title={t('support_image')}>
-          <input type="file" accept="image/*" onChange={pick} hidden />📎
+          <input type="file" accept="image/*" onChange={pick} hidden /><svg viewBox="0 0 24 24" className="ic" aria-hidden="true"><path d="M20 11.5l-7.8 7.8a5 5 0 0 1-7-7l8-8a3.3 3.3 0 0 1 4.700 4.700l-8 8a1.700 1.700 0 0 1-2.400-2.400l7.300-7.300" /></svg>
         </label>
         <input className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder={t('support_ph')} />
         <button className="btn btn--primary btn--sm" type="submit" disabled={busy}>{busy ? '…' : t('support_send')}</button>

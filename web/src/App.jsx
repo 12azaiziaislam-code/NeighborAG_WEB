@@ -7,7 +7,8 @@ import Download from './pages/Download.jsx'
 import Auth from './pages/Auth.jsx'
 import Profile from './pages/Profile.jsx'
 import Admin from './pages/Admin.jsx'
-import './app.css'
+import './site.css'
+import './admin.css'
 
 // ---- a tiny history router (no dependency) -------------------------------------------------
 const RouterContext = createContext(null)
@@ -109,6 +110,7 @@ function LangPicker() {
 function Nav() {
   const { t } = useI18n()
   const { user, signOut } = useAuth()
+  const { path } = useRouter()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   useEffect(() => {
@@ -117,18 +119,24 @@ function Nav() {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+  useEffect(() => { setOpen(false) }, [path])
   return (
-    <header className={`nav ${scrolled ? 'scrolled' : ''}`}>
+    <header className={`nav ${scrolled || open ? 'scrolled' : ''}`}>
       <div className="wrap nav-row">
         <Brand />
-        <button className="nav-toggle" aria-label="menu" onClick={() => setOpen((v) => !v)}>☰</button>
+        <button className="nav-toggle" aria-label="menu" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+          <svg viewBox="0 0 24 24" className="ic" aria-hidden="true"><path d={open ? 'M6 6l12 12M18 6L6 18' : 'M4 8h16M4 16h16'} /></svg>
+        </button>
         <nav className={`nav-links ${open ? 'open' : ''}`} onClick={() => setOpen(false)}>
-          <Link to="/#features">{t('nav_features')}</Link>
-          <Link to="/download">{t('nav_download')}</Link>
-          <LangPicker />
-          {user
-            ? <><Link to="/profile" className="btn btn--sm btn--ghost">{t('nav_profile')}</Link><button className="btn btn--sm" onClick={signOut}>{t('nav_logout')}</button></>
-            : <><Link to="/login" className="btn btn--sm btn--ghost">{t('nav_login')}</Link><Link to="/download" className="btn btn--sm btn--primary">{t('nav_download')}</Link></>}
+          <Link to="/#features" className="nav-link">{t('nav_features')}</Link>
+          <Link to="/#how" className="nav-link">{t('how_title')}</Link>
+          <Link to="/#faq" className="nav-link">{t('nav_faq')}</Link>
+          <div className="nav-end" onClick={(e) => e.stopPropagation()}>
+            <LangPicker />
+            {user
+              ? <><Link to="/profile" className="btn btn--sm btn--ghost">{t('nav_profile')}</Link><button className="btn btn--sm" onClick={signOut}>{t('nav_logout')}</button></>
+              : <><Link to="/login" className="btn btn--sm btn--ghost">{t('nav_login')}</Link><Link to="/download" className="btn btn--sm btn--primary">{t('nav_download')}</Link></>}
+          </div>
         </nav>
       </div>
     </header>
@@ -145,8 +153,10 @@ function Footer() {
           <p>{t('hero_sub')}</p>
         </div>
         <nav className="footer-col">
-          <h4>{t('nav_features')}</h4>
+          <h4>{t('foot_product')}</h4>
           <Link to="/#features">{t('nav_features')}</Link>
+          <Link to="/#how">{t('how_title')}</Link>
+          <Link to="/#faq">{t('nav_faq')}</Link>
           <Link to="/download">{t('nav_download')}</Link>
         </nav>
         <nav className="footer-col">
@@ -156,15 +166,15 @@ function Footer() {
         </nav>
       </div>
       <div className="footer-bottom">
-        <span className="muted">© 2026 NeighborAGI. All rights reserved.</span>
-        <Link to="/admin" className="muted footer-admin" aria-label="admin">·</Link>
+        <span>© 2026 NeighborAGI. {t('foot_rights')}</span>
+        <Link to="/admin" className="footer-admin" aria-label="admin">·</Link>
       </div>
     </footer>
   )
 }
 
 function NotFound() {
-  return <div className="wrap center" style={{ padding: '120px 0' }}><h1>404</h1><Link to="/" className="btn btn--primary">NeighborAGI</Link></div>
+  return <div className="wrap center" style={{ padding: '140px 24px' }}><h1>404</h1><Link to="/" className="btn btn--primary">NeighborAGI</Link></div>
 }
 
 export default function App() {

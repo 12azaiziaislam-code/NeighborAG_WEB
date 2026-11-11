@@ -145,10 +145,11 @@ async function appLogin(env, request, body) {
   }
   if (!user.device_id) {
     await env.DB.prepare('UPDATE users SET device_id = ?, device_name = ?, device_bound_at = ? WHERE id = ?')
-      .bind(deviceId, deviceName, now(), user.id).run()
+      .bind(deviceId, deviceName || 'PC', now(), user.id).run()
     user.device_id = deviceId
+    user.device_name = deviceName || 'PC'
   } else if (user.device_id !== deviceId) {
-    return json({ ok: false, reason: 'other_device', deviceName: user.device_name }, 403)
+    return json({ ok: false, reason: 'other_device', deviceName: user.device_name || 'Another device' }, 403)
   }
   const state = accessState(user)
   const t = await newSession(env, user.id, 'app', APP_SESSION_MS)
@@ -194,6 +195,7 @@ async function supportSend(env, request, body) {
 }
 
 async function storeImage(env, userId, dataUrl) {
+  if (!env.IMAGES) return null // R2 not enabled: image attachments are skipped, text still sends
   const match = /^data:(image\/[a-z+]+);base64,(.+)$/i.exec(String(dataUrl))
   if (!match) return null
   const bytes = fromB64(match[2])
@@ -207,6 +209,7 @@ async function supportImage(env, request, key) {
   const user = await sessionUser(env, request)
   if (!user) return bad('not signed in', 401)
   if (user.id !== ADMIN_USER_ID && !key.startsWith(user.id + '/')) return bad('not found', 404)
+  if (!env.IMAGES) return bad('not found', 404)
   const obj = await env.IMAGES.get(key)
   if (!obj) return bad('not found', 404)
   return new Response(obj.body, { headers: { 'content-type': obj.httpMetadata?.contentType || 'image/png', 'cache-control': 'private, max-age=86400' } })

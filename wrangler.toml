@@ -21,14 +21,21 @@ not_found_handling = "single-page-application"
 [[d1_databases]]
 binding = "DB"
 database_name = "neighboragi"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "119961f9-024b-453f-af12-5be158a1ffe6"
 
-[[r2_buckets]]
-binding = "IMAGES"
-bucket_name = "neighboragi-support-images"
+# Support-chat image attachments use R2. Enable R2 in the Cloudflare dashboard (one-time), then
+# uncomment this binding and run `wrangler r2 bucket create neighboragi-support-images` + redeploy.
+# Until then, support works with text only (the Worker handles a missing IMAGES binding gracefully).
+# [[r2_buckets]]
+# binding = "IMAGES"
+# bucket_name = "neighboragi-support-images"
 
 [vars]
 # The permanent download, always the newest version (Hugging Face).
 HF_INSTALLER_URL = "https://huggingface.co/islamII3620/NeighborAGI/resolve/main/NeighborAGI-Setup-x64.exe"
 # The admin account's email. The password is a secret (wrangler secret put ADMIN_PASSWORD), never in the code.
 ADMIN_EMAIL = "islemmamidoslema@gmail.com"
+
+# `wrangler deploy` builds the site first, so a Git-connected Cloudflare build needs no extra build command.
+[build]
+command = "npm run build"
