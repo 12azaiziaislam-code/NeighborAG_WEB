@@ -47,6 +47,8 @@ npx wrangler secret put AUTH_PEPPER         # any long random string
 npm run deploy
 ```
 
+Day to day, deploys are automatic: the Worker is connected to this GitHub repo (Cloudflare Workers Builds), so every push to `main` builds and deploys the site. `npm run deploy` is only needed for a manual deploy.
+
 To develop locally: `npm run db:init:local` then `npm run dev` (Worker + API) and `npm run dev:web` (site).
 
 ## API (summary)
