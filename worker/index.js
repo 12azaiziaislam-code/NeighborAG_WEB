@@ -172,6 +172,30 @@ async function download(env, request) {
   return json({ url: env.HF_INSTALLER_URL })
 }
 
+// ---- the account's own changes (website profile and the program's Profile page) -------------
+async function changeUsername(env, request, body) {
+  const user = await sessionUser(env, request)
+  if (!user || user.id === ADMIN_USER_ID) return bad('not signed in', 401)
+  const username = String(body.username || '').trim()
+  if (!USERNAME_RE.test(username)) return bad('the username must be 3-32 letters, numbers, . _ or -')
+  if (username === user.username) return json({ ok: true, user: publicUser(user) })
+  const clash = await env.DB.prepare('SELECT 1 FROM users WHERE username = ? AND id != ?').bind(username, user.id).first()
+  if (clash) return bad('that username is already taken', 409)
+  await env.DB.prepare('UPDATE users SET username = ? WHERE id = ?').bind(username, user.id).run()
+  const fresh = await env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(user.id).first()
+  return json({ ok: true, user: publicUser(fresh) })
+}
+
+// Deleting one's own account asks for the password again: a session left open on a shared computer must not be
+// enough to erase the account.
+async function deleteOwnAccount(env, request, body) {
+  const user = await sessionUser(env, request)
+  if (!user || user.id === ADMIN_USER_ID) return bad('not signed in', 401)
+  const password = String(body.password || '')
+  if (!(await verifyPassword(password, env.AUTH_PEPPER, user.password_hash))) return bad('wrong password', 401)
+  return adminDelete(env, user.id)
+}
+
 // ---- support chat --------------------------------------------------------------------------
 async function supportList(env, request) {
   const user = await sessionUser(env, request)
@@ -325,6 +349,8 @@ async function api(request, env, url) {
     return json({ ok: true })
   }
   if (path === '/api/download' && method === 'GET') return download(env, request)
+  if (path === '/api/account/username' && method === 'POST') return changeUsername(env, request, body)
+  if (path === '/api/account/delete' && method === 'POST') return deleteOwnAccount(env, request, body)
   if (path === '/api/support' && method === 'GET') return supportList(env, request)
   if (path === '/api/support' && method === 'POST') return supportSend(env, request, body)
   const img = path.match(/^\/api\/support\/image\/(.+)$/)
