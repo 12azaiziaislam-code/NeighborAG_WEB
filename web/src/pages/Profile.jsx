@@ -9,17 +9,27 @@ function fmt(ts) { return ts ? new Date(ts).toLocaleString() : '—' }
 function accessBadge(user, t) {
   if (user.bannedUntil && user.bannedUntil > Date.now()) return <span className="badge badge--ban">{t('profile_banned')}</span>
   if (user.activatedUntil && user.activatedUntil > Date.now()) return <span className="badge badge--ok">{t('profile_active_until')} {fmt(user.activatedUntil)}</span>
+  if (user.activatedUntil) return <span className="badge badge--off">{t('profile_expired')}</span>
   return <span className="badge badge--warn">{t('profile_not_active')}</span>
 }
 
 export default function Profile() {
   const { t, lang, setLang } = useI18n()
-  const { user, ready, signOut } = useAuth()
+  const { user, ready, signOut, refresh } = useAuth()
   const { navigate } = useRouter()
   const [tab, setTab] = useState('account')
   const [unread, setUnread] = useState(0)
 
   useEffect(() => { if (ready && !user) navigate('/login') }, [ready, user, navigate])
+  // Access is granted from the admin panel at any time: read it again on open, on return to the tab, and every 30 s.
+  useEffect(() => {
+    refresh()
+    const again = () => { if (document.visibilityState === 'visible') refresh() }
+    const id = window.setInterval(again, 30000)
+    window.addEventListener('focus', again)
+    document.addEventListener('visibilitychange', again)
+    return () => { window.clearInterval(id); window.removeEventListener('focus', again); document.removeEventListener('visibilitychange', again) }
+  }, [refresh])
   // The unread admin-message count rides alongside the user in /api/me (a sibling of `user`), so fetch it here.
   useEffect(() => { let on = true; api.me().then((r) => { if (on) setUnread(r.unreadSupport || 0) }).catch(() => {}); return () => { on = false } }, [])
   const loadSupport = useCallback(() => api.support(), [])
@@ -52,8 +62,8 @@ export default function Profile() {
             <div className="kv"><span>{t('auth_username')}</span><b>{user.username}</b></div>
             <div className="kv"><span>{t('profile_device')}</span><b>{user.deviceName || t('profile_none')}</b></div>
             <div className="kv"><span>{t('profile_access')}</span><b>{accessBadge(user, t)}</b></div>
-            {(!user.activatedUntil || user.activatedUntil < Date.now()) && !user.bannedUntil && (
-              <p className="muted" style={{ marginTop: 14 }}>{t('profile_not_active')}</p>
+            {(!user.activatedUntil || user.activatedUntil < Date.now()) && !(user.bannedUntil > Date.now()) && (
+              <p className="muted" style={{ marginTop: 14 }}>{user.activatedUntil ? t('profile_expired_hint') : t('profile_not_active')}</p>
             )}
           </div>
         )}

@@ -275,3 +275,45 @@ kbd { display: inline-flex; align-items: center; height: 24px; padding: 0 8px; b
   .sect-head { margin-bottom: 36px; }
   .sect-head p { font-size: 16px; }
 }
+
+/* ---- the real companion card, as the app draws it (desktop/src/widget: .shell, .bar, .stage, .say, .inputrow) ---- */
+.nw-desk { position: relative; display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; gap: 14px; min-height: 420px; padding: 40px 28px 26px; border-radius: 12px 12px 0 0;
+  background:
+    radial-gradient(70% 90% at 85% 100%, rgba(210, 130, 90, 0.22), transparent 70%),
+    radial-gradient(60% 80% at 10% 0%, rgba(46, 92, 196, 0.22), transparent 70%),
+    linear-gradient(160deg, #1a2240 0%, #241f3a 55%, #3a2a3a 100%); }
+.nw-card { width: min(720px, 100%); border-radius: 16px; overflow: hidden; color: #f4f1ea; font-family: 'Segoe UI', 'Segoe UI Variable', system-ui, -apple-system, sans-serif; font-size: 14px; text-align: start;
+  background: linear-gradient(rgba(46, 92, 196, 0.26) 0%, rgba(0, 0, 0, 0) 190px), rgba(8, 11, 22, 0.8);
+  border: 1px solid rgba(110, 150, 240, 0.26);
+  box-shadow: rgba(0, 0, 0, 0.6) 0 2px 8px -2px, rgba(255, 255, 255, 0.09) 0 1px 0 0 inset, 0 30px 60px -30px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(18px); }
+.nw-bar { display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 10px 0 14px; padding-inline: 14px 10px; background: rgba(0, 0, 0, 0.18); }
+.nw-brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; letter-spacing: -0.01em; }
+.nw-brand i { width: 7px; height: 7px; border-radius: 50%; background: #e9b95c; box-shadow: 0 0 0 2px rgba(233, 185, 92, 0.16); }
+.nw-chip { display: inline-flex; align-items: center; gap: 6px; height: 21px; padding: 0 9px; border-radius: 999px; border: 1px solid rgba(233, 185, 92, 0.45); background: rgba(233, 185, 92, 0.13); color: #ffe2a8; font-size: 10.5px; font-weight: 600; }
+.nw-chip i { width: 5px; height: 5px; border-radius: 50%; background: #e9b95c; }
+.nw-actions { display: flex; align-items: center; gap: 2px; margin-inline-start: auto; color: #b9c4de; }
+.nw-actions b { display: grid; place-items: center; width: 27px; height: 27px; border-radius: 10px; font-weight: 400; font-size: 15px; }
+.nw-actions .ic { width: 14px; height: 14px; }
+.nw-actions .nw-sep { width: 1px; height: 14px; margin: 0 4px; background: rgba(185, 196, 222, 0.25); border-radius: 0; }
+.nw-stage { display: flex; align-items: center; gap: 14px; min-height: 144px; padding: 10px 18px 12px; }
+.nw-char { flex: none; }
+.nw-say { flex: 1; min-width: 0; max-width: 470px; padding: 11px 15px 13px; border-radius: 14px; background: rgba(18, 24, 40, 0.92); box-shadow: rgba(0, 0, 0, 0.7) 0 6px 16px -10px; }
+.nw-say p { margin: 0 0 10px; color: #fff; font-size: 15px; font-weight: 600; line-height: 1.4; }
+.nw-lines { display: flex; flex-direction: column; gap: 7px; }
+.nw-lines i { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.12); }
+.nw-input { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 48px; margin: 0 12px 12px; padding: 0 7px 0 16px; padding-inline: 16px 7px; border-radius: 22px; background: rgba(4, 7, 15, 0.62); border: 1px solid rgba(110, 150, 240, 0.24); color: rgba(255, 255, 255, 0.92); font-size: 13px; }
+.nw-input span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nw-input b { display: grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 17px; box-shadow: rgba(110, 150, 240, 0.24) 0 0 0 1px inset; color: #b9c4de; }
+.nw-input .ic { width: 15px; height: 15px; }
+[dir="rtl"] .nw-input .ic { transform: scaleX(-1); }
+.nw-keys { display: flex; align-items: center; gap: 7px; color: rgba(244, 241, 234, 0.7); font-size: 12.5px; }
+.nw-keys em { font-style: normal; margin-inline-start: 4px; }
+.nw-keys kbd { background: rgba(8, 11, 22, 0.6); border-color: rgba(110, 150, 240, 0.3); color: #f4f1ea; }
+@media (max-width: 760px) {
+  .nw-desk { min-height: 0; padding: 18px 10px 14px; }
+  .nw-actions b:nth-child(-n+3) { display: none; }
+  .nw-stage { gap: 8px; padding: 8px 10px 10px; }
+  .nw-say p { font-size: 13.5px; }
+  .nw-keys em { display: none; }
+}

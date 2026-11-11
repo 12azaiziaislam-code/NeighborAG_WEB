@@ -47,42 +47,35 @@ function Faq() {
   )
 }
 
-// The product as it sits on a Windows desktop: the chat window, and the companion docked beside it.
-function ProductShot() {
+// The product as it really looks: the program's own companion card (desktop/src/widget), drawn with its exact
+// colours, sizes and parts (title bar with the mode chip, the character with its speech bubble, the composer),
+// docked at the bottom of a desktop. Kept in step with the app by hand: see .nw-* in site.css.
+function AppPreview() {
   const { t } = useI18n()
   return (
     <div className="stage fade-in" aria-hidden="true">
-      <div className="desk">
-        <div className="win">
-          <div className="win-bar">
-            <span className="win-title">NeighborAGI</span>
-            <span className="win-ctl"><i className="c-min" /><i className="c-max" /><i className="c-x" /></span>
+      <div className="nw-desk">
+        <div className="nw-card">
+          <div className="nw-bar">
+            <span className="nw-brand"><i />NeighborAGI</span>
+            <span className="nw-chip"><i />{t('focus_a')}</span>
+            <span className="nw-actions">
+              <b>+</b><b><Icon name="grid" /></b><b className="nw-sep" /><b>&minus;</b><b>&times;</b>
+            </span>
           </div>
-          <div className="win-body">
-            <aside className="win-rail">
-              <span className="on"><Icon name="chat" /></span><span><Icon name="grid" /></span><span><Icon name="focus" /></span><span className="rail-end"><Icon name="cog" /></span>
-            </aside>
-            <div className="win-chat">
-              <div className="m m--user">{t('mock_user')}</div>
-              <div className="m m--bot">
-                <p>{t('mock_bot')}</p>
-                <div className="m-block">
-                  <b>{t('mock_summary')}</b>
-                  <i style={{ width: '92%' }} /><i style={{ width: '78%' }} /><i style={{ width: '64%' }} />
-                </div>
-                <div className="m-block">
-                  <b>{t('mock_reply')}</b>
-                  <i style={{ width: '86%' }} /><i style={{ width: '52%' }} />
-                </div>
-              </div>
-              <div className="win-input"><span>{t('support_ph')}</span><kbd>Enter</kbd></div>
+          <div className="nw-stage">
+            <div className="nw-char"><Pixel state="done" scale={3.8} look={[1.2, 1]} /></div>
+            <div className="nw-say">
+              <p>{t('mock_bot')}</p>
+              <div className="nw-lines"><i style={{ width: '94%' }} /><i style={{ width: '81%' }} /><i style={{ width: '58%' }} /></div>
             </div>
           </div>
+          <div className="nw-input">
+            <span>{t('mock_user')}</span>
+            <b><svg viewBox="0 0 24 24" className="ic"><path d="M4 12l16-8-6 16-2-6z" /></svg></b>
+          </div>
         </div>
-        <div className="desk-pet">
-          <Pixel state="idle" scale={3.4} look={[1, 1]} />
-          <kbd>Ctrl + B</kbd>
-        </div>
+        <div className="nw-keys"><kbd>Ctrl</kbd><span>+</span><kbd>B</kbd><em>{t('nw_toggle')}</em></div>
       </div>
     </div>
   )
@@ -103,7 +96,7 @@ export default function Home() {
             <Link to="/download" className="btn btn--primary btn--lg"><Icon name="windows" fill />{t('hero_cta')}</Link>
             <Link to="/#features" className="btn btn--lg">{t('hero_see')}</Link>
           </div>
-          <ProductShot />
+          <AppPreview />
         </div>
       </section>
 
@@ -148,12 +141,12 @@ export default function Home() {
           <div className="duo" aria-hidden="true">
             <div className="duo-half">
               <span className="duo-tag">{t('focus_a')}</span>
-              <Pixel state="idle" scale={3.6} look={[1, 1]} />
+              <Pixel state="idle" scale={6.4} look={[1, 1]} />
               <span className="duo-cap">{t('cap_companion')}</span>
             </div>
             <div className="duo-half duo-half--on">
               <span className="duo-tag">{t('focus_eyebrow')}</span>
-              <Pixel state="thinking" serious scale={3.6} look={[1, 1]} />
+              <Pixel state="thinking" serious scale={6.4} look={[1, 1]} />
               <span className="duo-cap">{t('cap_focused')}</span>
             </div>
           </div>

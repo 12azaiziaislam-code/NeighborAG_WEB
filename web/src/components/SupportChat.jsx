@@ -25,11 +25,12 @@ export default function SupportChat({ mine, load, send }) {
   const [text, setText] = useState('')
   const [image, setImage] = useState(null)
   const [busy, setBusy] = useState(false)
-  const endRef = useRef(null)
+  const logRef = useRef(null)
 
   const refresh = async () => { try { setMessages((await load()).messages || []) } catch { setMessages([]) } }
   useEffect(() => { refresh(); const id = setInterval(refresh, 8000); return () => clearInterval(id) }, [load])
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
+  // Scroll the thread itself to its newest message, never the page around it (scrollIntoView moved the whole page).
+  useEffect(() => { const el = logRef.current; if (el) el.scrollTop = el.scrollHeight }, [messages])
 
   const pick = async (e) => {
     const file = e.target.files?.[0]; if (!file) return
@@ -45,7 +46,7 @@ export default function SupportChat({ mine, load, send }) {
 
   return (
     <div className="chat">
-      <div className="chat-log">
+      <div className="chat-log" ref={logRef}>
         {messages === null && <div className="center" style={{ padding: 30 }}><span className="spin" /></div>}
         {messages && messages.length === 0 && <div className="center muted" style={{ padding: 30 }}>{t('support_empty')}</div>}
         {(messages || []).map((m) => (
@@ -55,7 +56,6 @@ export default function SupportChat({ mine, load, send }) {
             <time>{new Date(m.created_at).toLocaleString()}</time>
           </div>
         ))}
-        <div ref={endRef} />
       </div>
       <form className="chat-input" onSubmit={submit}>
         {image && <div className="chat-preview"><img src={image} alt="" /><button type="button" onClick={() => setImage(null)}>✕</button></div>}
