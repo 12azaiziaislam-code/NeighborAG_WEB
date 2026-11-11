@@ -21,11 +21,12 @@ export default function Profile() {
   const [unread, setUnread] = useState(0)
 
   useEffect(() => { if (ready && !user) navigate('/login') }, [ready, user, navigate])
-  // Access is granted from the admin panel at any time: read it again on open, on return to the tab, and every 30 s.
+  // Access is granted from the admin panel at any time: read it again on open, on return to the tab, and every 6 s
+  // while the page is in view, so an activation shows up by itself within seconds.
   useEffect(() => {
     refresh()
     const again = () => { if (document.visibilityState === 'visible') refresh() }
-    const id = window.setInterval(again, 30000)
+    const id = window.setInterval(again, 6000)
     window.addEventListener('focus', again)
     document.addEventListener('visibilitychange', again)
     return () => { window.clearInterval(id); window.removeEventListener('focus', again); document.removeEventListener('visibilitychange', again) }
