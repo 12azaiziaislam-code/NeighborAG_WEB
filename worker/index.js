@@ -332,7 +332,7 @@ async function adminSupportSend(env, id, body) {
   if (body.image) imageKey = await storeImage(env, id, body.image)
   if (!text && !imageKey) return bad('write a message')
   const mid = uuid()
-  await env.DB.prepare('INSERT INTO support_messages (id, user_id, sender, body, image_key, created_at, read_by_admin) VALUES (?,?,?,?,?,1)')
+  await env.DB.prepare('INSERT INTO support_messages (id, user_id, sender, body, image_key, created_at, read_by_admin) VALUES (?,?,?,?,?,?,1)')
     .bind(mid, id, 'admin', text, imageKey, now()).run()
   return json({ id: mid, imageKey })
 }
