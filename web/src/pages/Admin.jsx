@@ -201,7 +201,21 @@ export default function Admin() {
     try { setUsers((await api.adminUsers()).users || []) }
     catch (e) { if (e.status === 403 || e.status === 401) { setAdminToken(''); setAuthed(false) } }
   }, [])
-  useEffect(() => { if (authed) load() }, [authed, load])
+  // Load now, then poll while the list is open, so a support message sent from the app raises the red dot
+  // without the admin reloading the page. Paused while an account is open (its own thread is live there).
+  useEffect(() => {
+    if (!authed) return undefined
+    load()
+    const timer = window.setInterval(() => { if (!selected) load() }, 12000)
+    return () => window.clearInterval(timer)
+  }, [authed, load, selected])
+
+  // Opening an account reads its thread (the server marks the user's messages read there), so clear the red dot
+  // at once instead of waiting for a reload — the badge should disappear the moment the admin opens the chat.
+  const openAccount = (id) => {
+    setUsers((list) => (list || []).map((u) => (u.id === id ? { ...u, unread: 0 } : u)))
+    setSelected(id)
+  }
 
   const act = async (id, action, extra) => {
     try { await api.adminAction(id, action, extra); await load(); flash(t('admin_saved')) }
@@ -271,10 +285,13 @@ export default function Admin() {
                   <thead><tr><th>{t('admin_username')}</th><th>{t('admin_status')}</th><th className="c-until">{t('profile_active_until')}</th><th className="c-loc">{t('admin_country')}</th><th className="c-dev">{t('admin_device')}</th><th className="c-join">{t('admin_joined')}</th><th /></tr></thead>
                   <tbody>
                     {filtered.map((u) => (
-                      <tr key={u.id} tabIndex={0} onClick={() => setSelected(u.id)} onKeyDown={(e) => { if (e.key === 'Enter') setSelected(u.id) }}>
+                      <tr key={u.id} tabIndex={0} className={u.unread > 0 ? 'has-unread' : ''} onClick={() => openAccount(u.id)} onKeyDown={(e) => { if (e.key === 'Enter') openAccount(u.id) }}>
                         <td>
                           <div className="u-cell">
-                            <Avatar name={u.username} />
+                            <div className="u-ava">
+                              <Avatar name={u.username} />
+                              {u.unread > 0 && <span className="u-unread" title={t('admin_new_message')} aria-label={t('admin_new_message')}>{u.unread > 9 ? '9+' : u.unread}</span>}
+                            </div>
                             <div><div className="u-name">{u.username}</div><div className="u-mail">{u.email}</div></div>
                           </div>
                         </td>

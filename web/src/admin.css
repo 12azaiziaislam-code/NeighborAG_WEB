@@ -45,6 +45,15 @@
 .atable tbody tr:hover, .atable tbody tr:focus-visible { background: var(--surface); outline: 0; }
 .atable .dim { color: var(--text-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .u-cell { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.u-ava { position: relative; flex: none; display: flex; }
+/* The red dot over the avatar: an unopened support message from this account. */
+.u-unread {
+  position: absolute; top: -5px; inset-inline-end: -5px; min-width: 18px; height: 18px; padding: 0 5px;
+  display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
+  background: #ef4444; color: #fff; font-size: 11px; font-weight: 700; line-height: 1; border-radius: 9px;
+  border: 2px solid var(--bg); box-shadow: 0 0 0 1px rgba(239, 68, 68, .35); font-variant-numeric: tabular-nums;
+}
+.atable tbody tr.has-unread .u-name { font-weight: 700; }
 .u-name { font-weight: 500; }
 .u-mail { color: var(--text-3); font-size: 13px; }
 .u-go { width: 1%; color: var(--text-3); }

@@ -219,13 +219,20 @@ async function supportSend(env, request, body) {
 }
 
 async function storeImage(env, userId, dataUrl) {
-  if (!env.IMAGES) return null // R2 not enabled: image attachments are skipped, text still sends
   const match = /^data:(image\/[a-z+]+);base64,(.+)$/i.exec(String(dataUrl))
   if (!match) return null
   const bytes = fromB64(match[2])
-  if (bytes.length > 3 * 1024 * 1024) throw new Error('image too large')
+  // The browser already resized + re-encoded the image to JPEG, so this is tens of KB; the cap is only a guard
+  // against an un-compressed upload. D1 holds a value comfortably under 1 MB, R2 would take more.
+  if (bytes.length > 1.5 * 1024 * 1024) throw new Error('image too large')
   const key = `${userId}/${uuid()}`
-  await env.IMAGES.put(key, bytes, { httpMetadata: { contentType: match[1] } })
+  if (env.IMAGES) {
+    await env.IMAGES.put(key, bytes, { httpMetadata: { contentType: match[1] } })
+    return key
+  }
+  // No R2 bucket bound: keep the compressed image in D1 so attachments work with no extra setup.
+  await env.DB.prepare('INSERT INTO support_images (key, content_type, data, created_at) VALUES (?,?,?,?)')
+    .bind(key, match[1], match[2], now()).run()
   return key
 }
 
@@ -233,10 +240,13 @@ async function supportImage(env, request, key) {
   const user = await sessionUser(env, request)
   if (!user) return bad('not signed in', 401)
   if (user.id !== ADMIN_USER_ID && !key.startsWith(user.id + '/')) return bad('not found', 404)
-  if (!env.IMAGES) return bad('not found', 404)
-  const obj = await env.IMAGES.get(key)
-  if (!obj) return bad('not found', 404)
-  return new Response(obj.body, { headers: { 'content-type': obj.httpMetadata?.contentType || 'image/png', 'cache-control': 'private, max-age=86400' } })
+  if (env.IMAGES) {
+    const obj = await env.IMAGES.get(key)
+    if (obj) return new Response(obj.body, { headers: { 'content-type': obj.httpMetadata?.contentType || 'image/png', 'cache-control': 'private, max-age=86400' } })
+  }
+  const row = await env.DB.prepare('SELECT content_type, data FROM support_images WHERE key = ?').bind(key).first()
+  if (!row) return bad('not found', 404)
+  return new Response(fromB64(row.data), { headers: { 'content-type': row.content_type || 'image/jpeg', 'cache-control': 'private, max-age=86400' } })
 }
 
 // ---- admin ---------------------------------------------------------------------------------
@@ -256,10 +266,15 @@ async function requireAdmin(env, request) {
 
 async function adminUsers(env) {
   const rows = await env.DB.prepare(
-    `SELECT id, email, username, created_at, signup_country, signup_city, device_id, device_name, device_bound_at,
-            activated_until, banned_until, last_login_at FROM users ORDER BY created_at DESC`,
+    `SELECT u.id, u.email, u.username, u.created_at, u.signup_country, u.signup_city, u.device_id, u.device_name,
+            u.device_bound_at, u.activated_until, u.banned_until, u.last_login_at,
+            (SELECT COUNT(*) FROM support_messages m
+              WHERE m.user_id = u.id AND m.sender = 'user' AND m.read_by_admin = 0) AS unread
+       FROM users u ORDER BY u.created_at DESC`,
   ).all()
-  return json({ users: (rows.results || []).map(publicUser) })
+  // The unread count drives the red dot on the account row, so the admin sees a new support message without
+  // opening every account; it clears when the admin opens the thread (adminSupportThread marks them read).
+  return json({ users: (rows.results || []).map((u) => ({ ...publicUser(u), unread: Number(u.unread) || 0 })) })
 }
 
 async function adminSetField(env, id, sql, ...args) {
@@ -300,6 +315,7 @@ async function adminAction(env, request, id, action, body) {
 async function adminDelete(env, id) {
   // sessions carry no FK, so drop the account's tokens explicitly; support_messages cascade with the user.
   await env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(id).run()
+  await env.DB.prepare("DELETE FROM support_images WHERE key LIKE ? || '/%'").bind(id).run()
   await env.DB.prepare('DELETE FROM users WHERE id = ?').bind(id).run()
   return json({ ok: true })
 }

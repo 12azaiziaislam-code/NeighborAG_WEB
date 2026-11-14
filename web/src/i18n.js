@@ -54,7 +54,7 @@ const S = {
     admin_duration: 'Duration', admin_years: 'y', admin_months: 'mo', admin_days: 'd', admin_hours: 'h', admin_minutes: 'm', admin_forever: 'Forever', admin_apply: 'Apply', admin_cancel: 'Cancel',
     admin_active: 'Active', admin_expired: 'Expired', admin_never: 'Not activated', admin_banned: 'Banned', admin_confirm_delete: 'Delete this account permanently?',
     admin_access_t: 'Program access', admin_ban_t: 'Ban', admin_danger_t: 'Danger zone', admin_s_total: 'Accounts', admin_s_pending: 'Pending', admin_manage: 'Manage', admin_empty: 'No accounts yet',
-    admin_saved: 'Saved', admin_deleted: 'Account deleted',
+    admin_saved: 'Saved', admin_deleted: 'Account deleted', admin_new_message: 'New support message',
     common_loading: 'Loading…', common_error: 'Something went wrong', err_other_device: 'This account is already used on another device.', back: 'Back',
   },
   ar: {
@@ -106,7 +106,7 @@ const S = {
     admin_duration: 'المدة', admin_years: 'سنة', admin_months: 'شهر', admin_days: 'يوم', admin_hours: 'ساعة', admin_minutes: 'دقيقة', admin_forever: 'للأبد', admin_apply: 'تطبيق', admin_cancel: 'إلغاء',
     admin_active: 'مُفعَّل', admin_expired: 'منتهٍ', admin_never: 'غير مُفعَّل', admin_banned: 'محظور', admin_confirm_delete: 'حذف هذا الحساب نهائيًا؟',
     admin_access_t: 'صلاحية البرنامج', admin_ban_t: 'الحظر', admin_danger_t: 'منطقة الخطر', admin_s_total: 'الحسابات', admin_s_pending: 'بالانتظار', admin_manage: 'إدارة', admin_empty: 'لا حسابات بعد',
-    admin_saved: 'تمّ الحفظ', admin_deleted: 'حُذف الحساب',
+    admin_saved: 'تمّ الحفظ', admin_deleted: 'حُذف الحساب', admin_new_message: 'رسالة دعم جديدة',
     common_loading: 'جارٍ التحميل…', common_error: 'حدث خطأ ما', err_other_device: 'هذا الحساب مستعمَل على جهاز آخر.', back: 'رجوع',
   },
   ru: {
@@ -158,7 +158,7 @@ const S = {
     admin_duration: 'Срок', admin_years: 'г', admin_months: 'мес', admin_days: 'д', admin_hours: 'ч', admin_minutes: 'м', admin_forever: 'Навсегда', admin_apply: 'Применить', admin_cancel: 'Отмена',
     admin_active: 'Активен', admin_expired: 'Истёк', admin_never: 'Не активирован', admin_banned: 'Забанен', admin_confirm_delete: 'Удалить аккаунт навсегда?',
     admin_access_t: 'Доступ к программе', admin_ban_t: 'Бан', admin_danger_t: 'Опасная зона', admin_s_total: 'Аккаунты', admin_s_pending: 'Ожидают', admin_manage: 'Управление', admin_empty: 'Пока нет аккаунтов',
-    admin_saved: 'Сохранено', admin_deleted: 'Аккаунт удалён',
+    admin_saved: 'Сохранено', admin_deleted: 'Аккаунт удалён', admin_new_message: 'Новое сообщение',
     common_loading: 'Загрузка…', common_error: 'Что-то пошло не так', err_other_device: 'Этот аккаунт уже используется на другом устройстве.', back: 'Назад',
   },
 }
