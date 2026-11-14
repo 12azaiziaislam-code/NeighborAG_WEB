@@ -377,13 +377,16 @@ async function api(request, env, url) {
   if (path.startsWith('/api/admin/')) {
     if (!(await requireAdmin(env, request))) return bad('admin only', 403)
     if (path === '/api/admin/users' && method === 'GET') return adminUsers(env)
+    // The support thread is matched BEFORE the generic action route: its last path part is "support", which the
+    // `([a-z]+)` action pattern also matches, so an earlier action check would swallow the POST and 404 it (the
+    // GET fell through, which is why reading a thread worked but sending a reply did not).
+    const thread = path.match(/^\/api\/admin\/users\/([^/]+)\/support$/)
+    if (thread && method === 'GET') return adminSupportThread(env, thread[1])
+    if (thread && method === 'POST') return adminSupportSend(env, thread[1], body)
     const act = path.match(/^\/api\/admin\/users\/([^/]+)\/([a-z]+)$/)
     if (act && method === 'POST') return adminAction(env, request, act[1], act[2], body)
     const del = path.match(/^\/api\/admin\/users\/([^/]+)$/)
     if (del && method === 'DELETE') return adminDelete(env, del[1])
-    const thread = path.match(/^\/api\/admin\/users\/([^/]+)\/support$/)
-    if (thread && method === 'GET') return adminSupportThread(env, thread[1])
-    if (thread && method === 'POST') return adminSupportSend(env, thread[1], body)
   }
   return bad('not found', 404)
 }
