@@ -31,6 +31,13 @@ export const api = {
   support: () => req('/support'),
   sendSupport: (body, image) => req('/support', { method: 'POST', body: { body, image } }),
   imageUrl: (key) => '/api/support/image/' + encodeURIComponent(key),
+  // An <img src> cannot carry the Bearer token, so a support picture is fetched with it and shown as a blob URL.
+  imageBlob: async (key, admin = false) => {
+    const token = admin ? getAdminToken() : getToken()
+    const res = await fetch('/api/support/image/' + encodeURIComponent(key), { headers: token ? { authorization: 'Bearer ' + token } : {} })
+    if (!res.ok) throw new Error('image ' + res.status)
+    return URL.createObjectURL(await res.blob())
+  },
   // admin
   adminLogin: (email, password) => req('/admin/login', { method: 'POST', body: { email, password } }),
   adminUsers: () => req('/admin/users', { admin: true }),

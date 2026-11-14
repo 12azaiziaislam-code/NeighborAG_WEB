@@ -18,6 +18,33 @@ function compress(file, max = 1280, quality = 0.72) {
   })
 }
 
+// A support picture: fetched with the session token (an <img src> alone was refused as "not signed in"), shown in
+// the thread, opened full size on click, and downloadable.
+function ChatImage({ imageKey, admin }) {
+  const [url, setUrl] = useState('')
+  const [open, setOpen] = useState(false)
+  const [failed, setFailed] = useState(false)
+  useEffect(() => {
+    let live = true, made = ''
+    api.imageBlob(imageKey, admin).then((u) => { made = u; if (live) setUrl(u) }).catch(() => live && setFailed(true))
+    return () => { live = false; if (made) URL.revokeObjectURL(made) }
+  }, [imageKey, admin])
+  if (failed) return <div className="bubble-img-missing">🖼</div>
+  if (!url) return <div className="bubble-img bubble-img--loading"><span className="spin" /></div>
+  return (
+    <>
+      <img className="bubble-img" src={url} alt="" onClick={() => setOpen(true)} />
+      <a className="bubble-dl" href={url} download={'support-' + imageKey.split('/').pop() + '.jpg'}>⤓</a>
+      {open && (
+        <div className="img-lightbox" onClick={() => setOpen(false)} role="dialog">
+          <img src={url} alt="" />
+          <a className="btn btn--primary btn--sm" href={url} download={'support-' + imageKey.split('/').pop() + '.jpg'} onClick={(e) => e.stopPropagation()}>⤓</a>
+        </div>
+      )}
+    </>
+  )
+}
+
 // A two-way thread. `mine` says which sender is "me" ('user' in the profile, 'admin' in the panel).
 export default function SupportChat({ mine, load, send }) {
   const { t } = useI18n()
@@ -52,7 +79,7 @@ export default function SupportChat({ mine, load, send }) {
         {(messages || []).map((m) => (
           <div key={m.id} className={`bubble ${m.sender === mine ? 'me' : 'them'}`}>
             {m.body && <div className="bubble-text">{m.body}</div>}
-            {m.image_key && <img className="bubble-img" src={api.imageUrl(m.image_key)} alt="" loading="lazy" />}
+            {m.image_key && <ChatImage imageKey={m.image_key} admin={mine === 'admin'} />}
             <time>{new Date(m.created_at).toLocaleString()}</time>
           </div>
         ))}
